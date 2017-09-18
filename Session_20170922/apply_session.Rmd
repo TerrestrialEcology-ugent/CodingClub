@@ -1,0 +1,198 @@
+---
+title: "Introduction to the apply family"
+author: "Lionel Hertzog"
+date: "September 16, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+```
+
+Some intro text
+
+## Apply
+
+Some intro on apply
+
+## Example
+
+We'll explore the power of apply using typical community dataset.
+
+```{r}
+comm <- matrix(rpois(50,2),nrow = 5,dimnames = list(paste("Site",1:5),paste("Species",1:10)))
+#compute number of individual per sites
+apply(comm,1,sum)
+rowSums(comm)
+#the same with a for loop
+sums <- NULL
+for(i in 1:nrow(comm)){
+  sums <- c(sums,sum(comm[i,]))
+}
+#compute species richness per site
+apply(comm,1,function(x) sum(x>0))
+```
+
+## Exercixes 
+
+```{r}
+#Easy
+#compute in how many sites each species occur
+apply(comm,2,function(x) sum(x>0))
+
+#compute the mean abundance of species with more than 2 individuals in each site
+apply(comm,1,function(x) mean(x>2))
+
+#compute the relative abundance (save the object for later use)
+ps <- apply(comm,1,function(x) x/sum(x))
+
+#Medium
+#compute the exponential of the shannon diversity for each site
+apply(ps,2,function(x) exp(-sum(x*log(x),na.rm=TRUE)))
+
+#Hard
+#turn the abundance into classes, turn the species with highest abundance into a "D" all others with abundance superior to 0 into "S" and species of 0 into "A" (save the object)
+doms <- apply(comm,1,function(x) ifelse(x == max(x), "D",ifelse(x>0,"S","A")))
+
+#count how often each species is dominant
+apply(doms,1,function(x) sum(x == "D"))
+```
+
+#lapply
+
+Some intro stuff
+
+## Example
+
+```{r}
+data("mtcars")
+#get the range for each column in the dataset
+lapply(mtcars,range)
+#simulate some data from each columns based on observed mean and sd
+lapply(mtcars,function(x) rnorm(10,mean(x),sd(x)))
+```
+
+## Exercice
+
+```{r}
+#Easy
+#compute the coefficient of variation for each columns in mtcars
+#help CV = mean / sd
+lapply(mtcars,function(x) mean(x)/sd(x))
+
+#compute the 0.25, median and 0.75 quantile for each columns
+lapply(mtcars,quantile,probs=c(0.25,0.5,0.75))
+
+#Medium
+#compute the correlation between a random vector of normal deviates and each columns, hint: you have to use a function with more than one argument
+rnd <- rnorm(nrow(mtcars))
+lapply(mtcars,function(x,cov) cor(x,cov),cov=rnd)
+
+
+#Hard
+#get the car name which get the maximum value for each colmuns
+lapply(mtcars,function(x,row_name) row_name[which.max(x)],row_name=rownames(mtcars))
+```
+
+# sapply
+
+Some intro stuff
+
+## Example
+
+```{r}
+#average value per column
+sapply(mtcars,mean)
+#write up own summary statistic function
+sum_stat <- function(x){
+  quants <- quantile(x,probs=c(0.25,0.5,0.75),names=FALSE)
+  return(c(Q25 = quants[1],Median=quants[2],Q75=quants[3]))
+}
+summ <- sapply(mtcars,sum_stat)
+class(summ)
+#sapply only coerce response into arrays when all output are of similar length
+subs <- sapply(mtcars,function(x) x[x>4])
+sapply(subs,length)
+```
+
+## Exercice
+
+```{r}
+#Easy
+#put the mean, standard deviation and coefficient of variation of each column into a nice table
+#hint you can re-use sum_stat to get nice row names
+sum_stat <- function(x){
+  return(c(Mean=mean(x),Std.Dev.=sd(x),CV=mean(x)/sd(x)))
+}
+sapply(mtcars,sum_stat)
+
+#Medium
+#standardize all variables in the dataset
+sapply(mtcars,function(x) (x-mean(x))/sd(x))
+
+#Hard
+#create function that removes outliers based on some varying threshold
+#by default an outlier is an observation that is more or less than 1.5 * (Q75 - Q25)
+out_dect <- function(x,thresh=1.5){
+  qs <- quantile(x,probs=c(0.25,0.75))
+  lims <- c( qs[1] - thresh * (qs[2] - qs[1]),qs[2] + thresh * (qs[2] - qs[1]))
+  return(x < lims[1] | x > lims[2])
+}
+#remove all outliers from the mtcars dataset with a threshold of 1.5
+#try to find out how to still end up with a data frame at the end
+sapply(mtcars,function(x) ifelse(out_dect(x),NA,x))
+```
+
+
+# tapply
+
+Only shortly shown here, very similar to aggregate or the dplyr-groupy_by-summarise.
+
+## Example
+
+```{r}
+#compute mean mpg per cyl level
+tapply(mtcars$mpg,mtcars$cyl,mean)
+```
+
+# mapply
+
+## Example
+
+```{r}
+#repeat some letters an arbitrary number of times
+mapply(rep,x=letters[1:4],times=1:4)
+
+#correlation between two sets of variables
+mtcars_std <- as.data.frame(sapply(mtcars,function(x) (x-mean(x))/sd(x)))
+mapply(cor,x=mtcars,y=mtcars_std)
+```
+
+## Exercice
+
+```{r}
+#Easy
+#repeat the car names as many times as they have gears
+mapply(rep,x=rownames(mtcars),times=mtcars$gear)
+
+#Medium
+#repeat species names per sample depending on their abundance
+mapply(rep,x=colnames(comm),times=comm)
+```
+
+#plyr
+
+## Example
+
+```{r}
+#say we want to get quantile information from each species in the community
+#and what to display this in a df
+adply(comm,2,quantile,probs=c(0.25,0.5,0.75))
+
+#if we want to have this in a list
+alply(comm,2,quantile,probs=c(0.25,0.5,0.75))
+
+
+
+```
+

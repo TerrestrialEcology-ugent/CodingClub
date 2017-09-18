@@ -46,7 +46,7 @@ dat %>%
   group_by(id_plot,specrich,total_all_ba,rel_fsyl,rel_qrob,rel_qrub,fragmean)%>%
   summarise(Abun=sum(abun),Weight=n()) -> dat_dd
 
-mo <- glm.nb(Abun ~ fragmean + total_all_ba+offset(Weight),dat_dd,family = poisson)
+mo <- glm.nb(Abun ~ fragmean + total_all_ba+offset(log(Weight)),dat_dd)
 
 
 
