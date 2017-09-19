@@ -4,39 +4,18 @@ author: "Lionel Hertzog"
 date: "September 16, 2017"
 output: html_document
 ---
+# Apply
 
-```{r setup, include=FALSE}
-
-```
-
-Some intro text
-
-## Apply
-
-Some intro on apply
-
-## Example
-
-We'll explore the power of apply using typical community dataset.
+## Exercises 
 
 ```{r}
-comm <- matrix(rpois(50,2),nrow = 5,dimnames = list(paste("Site",1:5),paste("Species",1:10)))
-#compute number of individual per sites
-apply(comm,1,sum)
-rowSums(comm)
-#the same with a for loop
-sums <- NULL
-for(i in 1:nrow(comm)){
-  sums <- c(sums,sum(comm[i,]))
-}
+#create a dummy community dataset
+(comm <- matrix(rpois(50,2),nrow = 5,dimnames = list(paste("Site",1:5),paste("Species",1:10))))
+
+#Easy
 #compute species richness per site
 apply(comm,1,function(x) sum(x>0))
-```
 
-## Exercixes 
-
-```{r}
-#Easy
 #compute in how many sites each species occur
 apply(comm,2,function(x) sum(x>0))
 
@@ -60,22 +39,13 @@ apply(doms,1,function(x) sum(x == "D"))
 
 #lapply
 
-Some intro stuff
-
-## Example
-
-```{r}
-data("mtcars")
-#get the range for each column in the dataset
-lapply(mtcars,range)
-#simulate some data from each columns based on observed mean and sd
-lapply(mtcars,function(x) rnorm(10,mean(x),sd(x)))
-```
-
 ## Exercice
 
 ```{r}
 #Easy
+#get the range for each column in the dataset
+lapply(mtcars,range)
+
 #compute the coefficient of variation for each columns in mtcars
 #help CV = mean / sd
 lapply(mtcars,function(x) mean(x)/sd(x))
@@ -95,25 +65,6 @@ lapply(mtcars,function(x,row_name) row_name[which.max(x)],row_name=rownames(mtca
 ```
 
 # sapply
-
-Some intro stuff
-
-## Example
-
-```{r}
-#average value per column
-sapply(mtcars,mean)
-#write up own summary statistic function
-sum_stat <- function(x){
-  quants <- quantile(x,probs=c(0.25,0.5,0.75),names=FALSE)
-  return(c(Q25 = quants[1],Median=quants[2],Q75=quants[3]))
-}
-summ <- sapply(mtcars,sum_stat)
-class(summ)
-#sapply only coerce response into arrays when all output are of similar length
-subs <- sapply(mtcars,function(x) x[x>4])
-sapply(subs,length)
-```
 
 ## Exercice
 
@@ -144,35 +95,13 @@ sapply(mtcars,function(x) ifelse(out_dect(x),NA,x))
 ```
 
 
-# tapply
-
-Only shortly shown here, very similar to aggregate or the dplyr-groupy_by-summarise.
-
-## Example
-
-```{r}
-#compute mean mpg per cyl level
-tapply(mtcars$mpg,mtcars$cyl,mean)
-```
-
 # mapply
-
-## Example
-
-```{r}
-#repeat some letters an arbitrary number of times
-mapply(rep,x=letters[1:4],times=1:4)
-
-#correlation between two sets of variables
-mtcars_std <- as.data.frame(sapply(mtcars,function(x) (x-mean(x))/sd(x)))
-mapply(cor,x=mtcars,y=mtcars_std)
-```
 
 ## Exercice
 
 ```{r}
 #Easy
-#repeat the car names as many times as they have gears
+#repeat the car names (rownames) as many times as they have gears
 mapply(rep,x=rownames(mtcars),times=mtcars$gear)
 
 #Medium
@@ -181,18 +110,4 @@ mapply(rep,x=colnames(comm),times=comm)
 ```
 
 #plyr
-
-## Example
-
-```{r}
-#say we want to get quantile information from each species in the community
-#and what to display this in a df
-adply(comm,2,quantile,probs=c(0.25,0.5,0.75))
-
-#if we want to have this in a list
-alply(comm,2,quantile,probs=c(0.25,0.5,0.75))
-
-
-
-```
 
