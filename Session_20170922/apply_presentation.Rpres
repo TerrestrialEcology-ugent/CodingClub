@@ -124,15 +124,15 @@ l(ist)apply
 
 Official definition:
 
-lapply returns a **list** of the same length as X, each element of which is the result of **applying FUN** to the corresponding element of X.
+lapply returns a **list** of the same length as X, each element of which is the result of **applying some function** to the corresponding element of X.
 
 ...
 
-lapply(X, FUN, ...)
+**lapply( some _object , some_function , some_arguments )**
 
 ...
 
-X a vector (atomic or list) or an expression object. Other objects (including classed objects) will be **coerced** by base::as.list.
+some_object is a vector (atomic or list) or an expression object. Other objects (including classed objects) will be **coerced** by base::as.list.
 
 l(ist)apply
 ========================================================
@@ -180,7 +180,7 @@ l(ist)apply
 One can pass **argument** to the function by naming them:
 
 ```{r}
-lapply(round(some_df,2),paste,collapse = "-")
+lapply(some_df,paste,collapse = "-")
 ```
 
 l(ist)apply
@@ -201,6 +201,8 @@ Same as _lapply_ but this time the output will be a **vector** or a **matrix** i
 #average value per column
 sapply(mtcars,mean)
 ```
+
+Official doc: sapply is a user-friendly version and wrapper of lapply by default returning a vector, matrix or, if simplify = "array", an array if **appropriate**
 
 s(implify)apply
 ========================================================

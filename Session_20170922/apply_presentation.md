@@ -85,7 +85,7 @@ apply(some_array, 1, sum)
 ```
 
 ```
-[1] -1.803897 -3.425442 -0.615351 -3.598833 -2.784215
+[1] -3.976461 -1.198053 -1.839165 -2.699658  4.229726
 ```
 
 apply
@@ -99,7 +99,7 @@ apply(some_array, 1, foo)
 ```
 
 ```
-[1]  3.362949  7.256423 11.270784  3.430751  4.138546
+[1]  3.5954829  1.5825104  0.8070861 12.3461965  3.7857348
 ```
 
 Or we can use anonymous function:
@@ -109,7 +109,7 @@ apply(some_array, 1, function(x) sum(x^2))
 ```
 
 ```
-[1]  3.362949  7.256423 11.270784  3.430751  4.138546
+[1]  3.5954829  1.5825104  0.8070861 12.3461965  3.7857348
 ```
 
 
@@ -121,11 +121,11 @@ Time for some exercise, see **apply_exo.Rmd** file, we will use a standard commu
 
 ```
     Sp1 Sp2 Sp3 Sp4 Sp5 Sp6 Sp7 Sp8 Sp9 Sp10
-Pl1   2   3   5   5   4   2   3   1   0    1
-Pl2   2   5   4   0   3   0   0   3   1    2
-Pl3   1   2   2   1   1   1   2   1   1    2
-Pl4   3   2   1   2   0   5   4   0   0    1
-Pl5   2   2   2   2   6   1   3   0   3    4
+Pl1   1   3   1   1   2   3   1   0  10    2
+Pl2   1   0   3   2   2   1   1   0   0    0
+Pl3   1   3   3   1   1   3   2   2   1    4
+Pl4   1   0   3   1   5   1   0   1   2    1
+Pl5   0   0   1   1   2   2   0   3   2    2
 ```
 
 l(ist)apply
@@ -133,15 +133,15 @@ l(ist)apply
 
 Official definition:
 
-lapply returns a **list** of the same length as X, each element of which is the result of **applying FUN** to the corresponding element of X.
+lapply returns a **list** of the same length as X, each element of which is the result of **applying some function** to the corresponding element of X.
 
 ...
 
-lapply(X, FUN, ...)
+**lapply( some _object , some_function , some_arguments )**
 
 ...
 
-X a vector (atomic or list) or an expression object. Other objects (including classed objects) will be **coerced** by base::as.list.
+some_object is a vector (atomic or list) or an expression object. Other objects (including classed objects) will be **coerced** by base::as.list.
 
 l(ist)apply
 ========================================================
@@ -158,7 +158,7 @@ lapply in action:
 [1] 1 1 1 1 1
 
 [[2]]
-[1]  2.63410350 -0.37467145 -1.74800809 -0.70347132  0.05332487
+[1]  0.1684733  0.7683894  0.8603258 -0.3874114 -0.2373674
 ```
 
 ```r
@@ -170,7 +170,7 @@ lapply(some_list, max)
 [1] 1
 
 [[2]]
-[1] 2.634103
+[1] 0.8603258
 ```
 
 l(ist)apply
@@ -185,11 +185,11 @@ lapply in action:
 
 ```
            X1         X2
-1 0.600396876  0.0510465
-2 0.935327944  0.5205185
-3 0.932710486 -1.9917122
-4 0.230866797  1.2391772
-5 0.003063262  0.7740476
+1 0.761959070 -1.4775511
+2 0.775471393 -0.3492960
+3 0.909089487 -1.1267207
+4 0.807222017 -0.2170999
+5 0.003858022  0.5277255
 ```
 
 ```r
@@ -198,10 +198,10 @@ lapply(some_df, mean)
 
 ```
 $X1
-[1] 0.5404731
+[1] 0.65152
 
 $X2
-[1] 0.1186155
+[1] -0.5285884
 ```
 
 l(ist)apply
@@ -217,10 +217,10 @@ lapply(some_df, function(x) c(x[1] + 1, x[2] + 2))
 
 ```
 $X1
-[1] 1.600397 2.935328
+[1] 1.761959 2.775471
 
 $X2
-[1] 1.051046 2.520519
+[1] -0.4775511  1.6507040
 ```
 
 l(ist)apply
@@ -235,10 +235,10 @@ lapply(some_df, function(x) rnorm(5, mean(x), sd(x)))
 
 ```
 $X1
-[1] -0.3143578  0.4769397  0.1382514 -0.4189297  1.5732180
+[1] 0.2225272 0.1204254 1.1167974 1.2638007 0.5356777
 
 $X2
-[1] -0.71026991  2.00728401  0.04808783 -0.37558987  0.95519969
+[1] -0.08782976 -1.67848022  0.78619973 -1.18388854 -0.28138969
 ```
 
 l(ist)apply
@@ -248,15 +248,15 @@ One can pass **argument** to the function by naming them:
 
 
 ```r
-lapply(round(some_df, 2), paste, collapse = "-")
+lapply(some_df, paste, collapse = "-")
 ```
 
 ```
 $X1
-[1] "0.6-0.94-0.93-0.23-0"
+[1] "0.761959069874138-0.77547139278613-0.909089486580342-0.807222017319873-0.00385802169330418"
 
 $X2
-[1] "0.05-0.52--1.99-1.24-0.77"
+[1] "-1.47755112889918--0.349296046762842--1.12672066551953--0.217099934067969-0.527725536979764"
 ```
 
 l(ist)apply
@@ -296,6 +296,8 @@ sapply(mtcars, mean)
       qsec         vs         am       gear       carb 
  17.848750   0.437500   0.406250   3.687500   2.812500 
 ```
+
+Official doc: sapply is a user-friendly version and wrapper of lapply by default returning a vector, matrix or, if simplify = "array", an array if **appropriate**
 
 s(implify)apply
 ========================================================
@@ -538,12 +540,12 @@ adply(comm, 1, function(x) round(x/max(x), 2))
 ```
 
 ```
-   X1  Sp1  Sp2  Sp3  Sp4 Sp5  Sp6 Sp7 Sp8 Sp9 Sp10
-1 Pl1 0.40 0.60 1.00 1.00 0.8 0.40 0.6 0.2 0.0 0.20
-2 Pl2 0.40 1.00 0.80 0.00 0.6 0.00 0.0 0.6 0.2 0.40
-3 Pl3 0.50 1.00 1.00 0.50 0.5 0.50 1.0 0.5 0.5 1.00
-4 Pl4 0.60 0.40 0.20 0.40 0.0 1.00 0.8 0.0 0.0 0.20
-5 Pl5 0.33 0.33 0.33 0.33 1.0 0.17 0.5 0.0 0.5 0.67
+   X1  Sp1  Sp2  Sp3  Sp4  Sp5  Sp6  Sp7 Sp8  Sp9 Sp10
+1 Pl1 0.10 0.30 0.10 0.10 0.20 0.30 0.10 0.0 1.00 0.20
+2 Pl2 0.33 0.00 1.00 0.67 0.67 0.33 0.33 0.0 0.00 0.00
+3 Pl3 0.25 0.75 0.75 0.25 0.25 0.75 0.50 0.5 0.25 1.00
+4 Pl4 0.20 0.00 0.60 0.20 1.00 0.20 0.00 0.2 0.40 0.20
+5 Pl5 0.00 0.00 0.33 0.33 0.67 0.67 0.00 1.0 0.67 0.67
 ```
 
 plyr
@@ -559,39 +561,39 @@ alply(comm, 2, quantile, probs = c(0.25, 0.5, 0.75))
 ```
 $`1`
 25% 50% 75% 
-  2   2   2 
+  1   1   1 
 
 $`2`
 25% 50% 75% 
-  2   2   3 
+  0   0   3 
 
 $`3`
 25% 50% 75% 
-  2   2   4 
+  1   3   3 
 
 $`4`
 25% 50% 75% 
-  1   2   2 
+  1   1   1 
 
 $`5`
 25% 50% 75% 
-  1   3   4 
+  2   2   2 
 
 $`6`
 25% 50% 75% 
-  1   1   2 
+  1   2   3 
 
 $`7`
 25% 50% 75% 
-  2   3   3 
+  0   1   1 
 
 $`8`
 25% 50% 75% 
-  0   1   1 
+  0   1   2 
 
 $`9`
 25% 50% 75% 
-  0   1   1 
+  1   2   2 
 
 $`10`
 25% 50% 75% 
@@ -639,15 +641,15 @@ a_ply(comm, 1, function(x) print(summary(x)))
 
 ```
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   0.00    1.25    2.50    2.60    3.75    5.00 
+   0.00    1.00    1.50    2.40    2.75   10.00 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   0.00    0.25    2.00    2.00    3.00    5.00 
+   0.00    0.00    1.00    1.00    1.75    3.00 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    1.0     1.0     1.0     1.4     2.0     2.0 
+    1.0     1.0     2.0     2.1     3.0     4.0 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   0.00    0.25    1.50    1.80    2.75    5.00 
+   0.00    1.00    1.00    1.50    1.75    5.00 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    0.0     2.0     2.0     2.5     3.0     6.0 
+   0.00    0.25    1.50    1.30    2.00    3.00 
 ```
 
 
