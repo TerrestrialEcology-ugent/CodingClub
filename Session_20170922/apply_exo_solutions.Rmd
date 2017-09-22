@@ -37,7 +37,7 @@ doms <- apply(comm,1,function(x) ifelse(x == max(x), "D",ifelse(x>0,"S","A")))
 apply(doms,1,function(x) sum(x == "D"))
 ```
 
-#lapply
+# lapply
 
 ## Exercise
 
@@ -109,7 +109,7 @@ mapply(rep,x=rownames(mtcars),times=mtcars$gear)
 mapply(rep,x=colnames(comm),times=comm)
 ```
 
-#plyr
+# plyr
 
 ## Exercise
 
