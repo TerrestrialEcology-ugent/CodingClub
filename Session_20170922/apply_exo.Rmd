@@ -14,27 +14,27 @@ output: html_document
 
 #Easy
 #compute species richness per site
-apply(comm,1,function(x) sum(x>0))
+apply()
 
 #compute in how many sites each species occur
-apply(comm,2,function(x) sum(x>0))
+apply()
 
 #compute the mean abundance of species with more than 2 individuals in each site
-apply(comm,1,function(x) mean(x>2))
+apply()
 
 #compute the relative abundance (save the object for later use)
-ps <- apply(comm,1,function(x) x/sum(x))
+ps <- apply()
 
 #Medium
 #compute the exponential of the shannon diversity for each site
-apply(ps,2,function(x) exp(-sum(x*log(x),na.rm=TRUE)))
+apply()
 
 #Hard
 #turn the abundance into classes, turn the species with highest abundance into a "D" all others with abundance superior to 0 into "S" and species of 0 into "A" (save the object)
-doms <- apply(comm,1,function(x) ifelse(x == max(x), "D",ifelse(x>0,"S","A")))
+doms <- apply()
 
 #count how often each species is dominant
-apply(doms,1,function(x) sum(x == "D"))
+apply()
 ```
 
 #lapply
@@ -44,24 +44,24 @@ apply(doms,1,function(x) sum(x == "D"))
 ```{r}
 #Easy
 #get the range for each column in the dataset
-lapply(mtcars,range)
+lapply()
 
 #compute the coefficient of variation for each columns in mtcars
 #help CV = mean / sd
-lapply(mtcars,function(x) mean(x)/sd(x))
+lapply()
 
 #compute the 0.25, median and 0.75 quantile for each columns
-lapply(mtcars,quantile,probs=c(0.25,0.5,0.75))
+lapply()
 
 #Medium
 #compute the correlation between a random vector of normal deviates and each columns, hint: you have to use a function with more than one argument
 rnd <- rnorm(nrow(mtcars))
-lapply(mtcars,function(x,cov) cor(x,cov),cov=rnd)
+lapply()
 
 
 #Hard
 #get the car name which get the maximum value for each colmuns
-lapply(mtcars,function(x,row_name) row_name[which.max(x)],row_name=rownames(mtcars))
+lapply()
 ```
 
 # sapply
@@ -72,26 +72,24 @@ lapply(mtcars,function(x,row_name) row_name[which.max(x)],row_name=rownames(mtca
 #Easy
 #put the mean, standard deviation and coefficient of variation of each column into a nice table
 #hint you can re-use sum_stat to get nice row names
-sum_stat <- function(x){
-  return(c(Mean=mean(x),Std.Dev.=sd(x),CV=mean(x)/sd(x)))
+sum_stat <- function(){
+  
 }
-sapply(mtcars,sum_stat)
+sapply()
 
 #Medium
 #standardize all variables in the dataset
-sapply(mtcars,function(x) (x-mean(x))/sd(x))
+sapply()
 
 #Hard
 #create function that removes outliers based on some varying threshold
 #by default an outlier is an observation that is more or less than 1.5 * (Q75 - Q25)
-out_dect <- function(x,thresh=1.5){
-  qs <- quantile(x,probs=c(0.25,0.75))
-  lims <- c( qs[1] - thresh * (qs[2] - qs[1]),qs[2] + thresh * (qs[2] - qs[1]))
-  return(x < lims[1] | x > lims[2])
+out_dect <- function(){
+  
 }
 #remove all outliers from the mtcars dataset with a threshold of 1.5
 #try to find out how to still end up with a data frame at the end
-sapply(mtcars,function(x) ifelse(out_dect(x),NA,x))
+sapply()
 ```
 
 
@@ -102,11 +100,11 @@ sapply(mtcars,function(x) ifelse(out_dect(x),NA,x))
 ```{r}
 #Easy
 #repeat the car names (rownames) as many times as they have gears
-mapply(rep,x=rownames(mtcars),times=mtcars$gear)
+mapply()
 
 #Medium
 #repeat species names per sample depending on their abundance
-mapply(rep,x=colnames(comm),times=comm)
+mapply()
 ```
 
 #plyr
@@ -114,15 +112,15 @@ mapply(rep,x=colnames(comm),times=comm)
 ## Exercise
 
 ```{r}
-library(plyr)
 #we have a a list of community matrices
 comm_li <- list(comm,comm+2,comm+rpois(50,1))
+
 #make a data frame with the species abundance over the site
-ldply(comm_li,function(comm) colSums(comm))
+ldply()
 
 #make a data frame with species richness per site
-ldply(comm_li,function(comm) apply(comm,1,function(x) sum(x>0)))
+ldply()
 
 #plot an histogram of species abundance for each site
-l_ply(comm_li,function(comm) barplot(comm,beside=TRUE))
+l_ply()
 ```
