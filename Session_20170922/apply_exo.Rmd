@@ -14,20 +14,22 @@ output: html_document
 
 #Easy
 #compute species richness per site
-apply()
+apply(comm,1,function(x) sum(x>0))
+apply(comm>0,1,sum) #thanks @Stefano
 
 #compute in how many sites each species occur
-apply()
+apply(comm, 2,function(x) sum(x>0))
+apply(comm > 0,2,sum)
 
 #compute the mean abundance of species with more than 2 individuals in each site
-apply()
+apply(comm, 1, function(x) mean(x[x>2]))
 
-#compute the relative abundance (save the object for later use)
-ps <- apply()
+#compute the relative abundance (save the object for later use) in each site
+ps <- apply(comm, 1, function(x) x / sum(x))
 
 #Medium
 #compute the exponential of the shannon diversity for each site
-apply()
+apply(ps, 2, function(x) exp(-sum(x*log(x),na.rm=TRUE)))
 
 #Hard
 #turn the abundance into classes, turn the species with highest abundance into a "D" all others with abundance superior to 0 into "S" and species of 0 into "A" (save the object)
@@ -43,25 +45,30 @@ apply()
 
 ```{r}
 #Easy
+data(mtcars)
+head(mtcars)
 #get the range for each column in the dataset
-lapply()
+lapply(mtcars, range)
+lapply(mtcars, function(x) max(x) - min(x))
 
 #compute the coefficient of variation for each columns in mtcars
-#help CV = mean / sd
-lapply()
+#help CV = sd / mean
+lapply(mtcars, function(x) sd(x)/mean(x))
 
 #compute the 0.25, median and 0.75 quantile for each columns
-lapply()
+lapply(mtcars, function(x) quantile(x,c(0.25,0.5,0.75)))
+lapply(mtcars,quantile,probs=c(0.25,0.5,0.75))
 
 #Medium
 #compute the correlation between a random vector of normal deviates and each columns, hint: you have to use a function with more than one argument
 rnd <- rnorm(nrow(mtcars))
-lapply()
-
+lapply(mtcars,function(x) cor(x,rnd))
+lapply(mtcars,function(x,y) cor(x,y),y=rnd)
 
 #Hard
 #get the car name which get the maximum value for each colmuns
-lapply()
+lapply(mtcars,function(x) rownames(mtcars)[x==max(x)]) #thanks @Frederik
+lapply(mtcars,function(x) rownames(mtcars)[which.max(x)])
 ```
 
 # sapply
@@ -72,24 +79,27 @@ lapply()
 #Easy
 #put the mean, standard deviation and coefficient of variation of each column into a nice table
 #hint you can re-use sum_stat to get nice row names
-sum_stat <- function(){
-  
+sum_stat <- function(x){
+  return(c(Mean=mean(x),SD=sd(x),CV=sd(x)/mean(x)))
 }
-sapply()
+sapply(mtcars,sum_stat)
 
 #Medium
 #standardize all variables in the dataset
-sapply()
+sapply(mtcars, function(x) (x-mean(x))/sd(x))
 
 #Hard
-#create function that removes outliers based on some varying threshold
-#by default an outlier is an observation that is more or less than 1.5 * (Q75 - Q25)
-out_dect <- function(){
-  
+#create function that removes outliers based on some varying threshold (X): X * (Q75 - Q25)
+#by default X is 1.5
+out_dect <- function(x,thresh=1.5){
+  qs <- quantile(x,c(0.25,0.75))
+  lims <- c(qs[1] - thresh * (qs[2] - qs[1]),  qs[2] + thresh * (qs[2] - qs[1]))
+  return(x < lims[1] | x > lims[2])
 }
 #remove all outliers from the mtcars dataset with a threshold of 1.5
 #try to find out how to still end up with a data frame at the end
-sapply()
+#where outliers are turned into NAs
+sapply(mtcars,function(x) ifelse(out_dect(x),NA,x))
 ```
 
 
@@ -112,15 +122,16 @@ mapply()
 ## Exercise
 
 ```{r}
+library(plyr)
 #we have a a list of community matrices
 comm_li <- list(comm,comm+2,comm+rpois(50,1))
 
 #make a data frame with the species abundance over the site
-ldply()
+ldply(comm_li,function(x) colSums(x))
 
 #make a data frame with species richness per site
-ldply()
+ldply(comm_li,function(x) rowSums(x>0)) #Stefano's trick
 
-#plot an histogram of species abundance for each site
-l_ply()
+#plot an histogram of species abundance over the site for each matrix
+l_ply(comm_li,function(comm) barplot(comm,beside = TRUE))
 ```
