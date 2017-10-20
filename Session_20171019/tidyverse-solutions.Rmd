@@ -228,7 +228,3 @@ nr_seedlings_tidy_3.4.7 <- full_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, b
 
 
 ```
-
-
-
-
