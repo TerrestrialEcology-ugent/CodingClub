@@ -140,10 +140,9 @@ Exercise for dataset 'nr_seedlings_tidy'
 1. calculate total nr of seedlings per plant per julian day as new base dataset
 2. calculate total nr of seedlings per inflorescence from the new dataset
 3. calculate total nr of seedlings per plant
-4. calculate the cumulative nr seedlings per plant from the lowest julian day to the highest (inspect the results!)
+4. calculate the cumulative (from the lowest julian day to the highest) nr seedlings per plant  (inspect the results!)
 5. remove rows that contains NA as value for nr_seedlings (and run nr 4 again)
-
-6. Join the datatable 'nr_seedlings_tidy' with 'plant_size_tidy' and keep only plants that are available in 'plant_size_tidy'
+6. Join the datatable 'nr_seedlings_tidy_3.4.4' with 'plant_size_tidy' and keep only plants that are available in 'plant_size_tidy'
 7. as nr 6 but keep all plants from both datatables.
 
 ```{r}
