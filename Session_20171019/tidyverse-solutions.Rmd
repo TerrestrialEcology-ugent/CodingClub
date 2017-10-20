@@ -11,6 +11,7 @@ output: html_document
 ```{r}
 library(dplyr)
 library(tidyr)
+library(tibble) #for me (lionel) I had to load this extra library ...
 
 df1 <- read.txt()
 ```
@@ -81,7 +82,8 @@ nr_seedlings_tidy <- gather(nr_seedlings, key = "julian_day", value = "nr_seedli
 
 #OR
 
-nr_seedlings_tidy <- nr_seedlings %>% gather(key = "julian_day", value = "nr_seedlings", JD233:JD399)
+nr_seedlings_tidy <- nr_seedlings %>% 
+			gather(key = "julian_day", value = "nr_seedlings", JD233:JD399)
 ```
 
 ## 2.2
@@ -90,8 +92,9 @@ nr_seedlings_tidy <- nr_seedlings %>% gather(key = "julian_day", value = "nr_see
 
 plant_size <- read.table("data/plant_size.txt", header=T)
 
-plant_size_tidy <- plant_size %>% spread(key=part, value= length) %>% 
-  separate(leaf, into= c("leaf_length","leaf_width"), sep="/")
+plant_size_tidy <- plant_size %>% 
+			spread(key=part, value= length) %>% 
+  			separate(leaf, into= c("leaf_length","leaf_width"), sep="/")
 
 ```
 
@@ -100,8 +103,8 @@ plant_size_tidy <- plant_size %>% spread(key=part, value= length) %>%
 # unite enables to unite two columns two one
 # reverse what you did in the previous exercise and combine the length and width of the leaf again to  one column using '_' as separator between the values
 
-plant_size_less_tidy <- plant_size_tidy %<% unite(new_leaf, leaf_length, leaf_width, sep="_")
-
+plant_size_tidy %>%
+	 unite(new_leaf, leaf_length, leaf_width, sep="_") -> plant_size_less_tidy
 ```
 
 
@@ -120,6 +123,7 @@ nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
 
 # the previous solution would not work if 'JD' is sometimes in capitals and sometimes in small letters 'jd'
 # in that case it would make sense to either call the columns directly or separate the column to obtain a numeric column.
+
 nr_seedlings_tidy <- nr_seedlings_tidy %>% 
   separate(julian_day, into = c("rubish", "julian_day"), sep = 2)
 nr_seedlings_tidy$julian_day <- as.numeric(nr_seedlings_tidy$julian_day)
@@ -141,12 +145,8 @@ Exercise for dataset 'plant_size_tidy'
 3. calculate scaled variables with mean 0 and sd 1 for each variable.
 
 ```{r}
-#plant_size_tidy <- plant_size_tidy %>% mutate_at(as.character(as.numeric()),-plant,-plot)
-
-plant_size_tidy <- plant_size_tidy %>% mutate(inflorescence = as.numeric(as.character(inflorescence)),
-                                              leaf_length = as.numeric(as.character(leaf_length)),
-                                              leaf_width = as.numeric(as.character(leaf_width)),
-                                              root = as.numeric(as.character(root)))
+#turn the length and width variables into numeric
+plant_size_tidy <- plant_size_tidy %>% mutate_at(as.numeric(as.character()),-plant,-plot)
 
 
 plant_size_tidy_3.2.1 <- plant_size_tidy %>% mutate(leaf_area = leaf_length*leaf_width)
@@ -196,27 +196,36 @@ Exercise for dataset 'nr_seedlings_tidy'
 7. as nr 6 but keep all plants from both datatables.
 
 ```{r}
-nr_seedlings_tidy_3.4.1 <- nr_seedlings_tidy %>% group_by(plant, julian_day, inflorescence) %>% summarise(nr_seedlings= sum(nr_seedlings))
+nr_seedlings_tidy_3.4.1 <- nr_seedlings_tidy %>%
+					 group_by(plant, julian_day, inflorescence) %>%
+					 summarise(nr_seedlings= sum(nr_seedlings))
+
 # we add inflorescence as argument to the group_by command to keep it as a column in order to use it in the next exercise 3.4.2
+nr_seedlings_tidy_3.4.2 <- nr_seedlings_tidy_3.4.1 %>% 
+					group_by(inflorescence) %>%
+				        summarise(mean_nr_seedlings= mean(nr_seedlings), sd_nr_seedlings= sd(nr_seedlings))
 
-nr_seedlings_tidy_3.4.2 <- nr_seedlings_tidy_3.4.1 %>% group_by(inflorescence) %>% summarise(mean_nr_seedlings= mean(nr_seedlings), sd_nr_seedlings= sd(nr_seedlings))
+nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.1 %>%
+					 group_by(plant) %>%
+					 summarise(total_nr_seedlings= sum(nr_seedlings))
 
-nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.1 %>% group_by(plant) %>% summarise(total_nr_seedlings= sum(nr_seedlings))
-
-nr_seedlings_tidy_3.4.4 <- nr_seedlings_tidy_3.4.1 %>% group_by(plant) %>% mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+nr_seedlings_tidy_3.4.4 <- nr_seedlings_tidy_3.4.1 %>%
+					 group_by(plant) %>%
+					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
 # when there is one NA somewhere, all subsequent values will be NA
 
 # to solve the problem with the NA's we can either decide to remove rows with NA from the dataset
 # be aware that this removes some rows from the dataframe
-nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>% filter(!is.na(nr_seedlings)) %>%
-  group_by(plant) %>% 
-  mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>%
+					 filter(!is.na(nr_seedlings)) %>%
+  					 group_by(plant) %>% 
+  					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
 
 # another option is to replace NA's with 0
 nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>% 
-  mutate( nr_seedlings = ifelse(is.na(nr_seedlings),0,nr_seedlings)) %>%
-  group_by(plant) %>% 
-  mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+  					mutate( nr_seedlings = ifelse(is.na(nr_seedlings),0,nr_seedlings)) %>%
+  					group_by(plant) %>% 
+ 				        mutate(cum_nr_seedlings = cumsum(nr_seedlings))
 
 # you might find that some conflicts arrise due to different names (plant and Plant with capital).
 nr_seedlings_tidy_3.4.6 <- right_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, by = c("plant" = "Plant"))
