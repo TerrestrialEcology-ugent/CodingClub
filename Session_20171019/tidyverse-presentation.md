@@ -38,7 +38,7 @@ Untidy data
 - One observation might be scattered across multiple rows.
 
 
-Typically a dataset will only suffer from one of these problems; it�ll only suffer from both if you�re really unlucky! To fix these problems, you�ll need the two most important functions in tidyr: gather() and spread().
+Typically a dataset will only suffer from one of these problems; it’ll only suffer from both if you’re really unlucky! To fix these problems, you’ll need the two most important functions in tidyr: gather() and spread().
 
 
 
@@ -61,11 +61,140 @@ sequential manipulations of a dataset.
 Use '%>%' to connect manipulations
 
 
+cars %>% as.tibble()
+
+
+
+creating tidy data
+=======================================================
+
+Four commands
+- Gather
+- Spread
+- separate
+- Unite
+
+Links
+- <http://r4ds.had.co.nz/tidy-data.html#spreading-and-gathering>
+- <http://r4ds.had.co.nz/tidy-data.html#separating-and-uniting>
+
+
+
+Part 2: working with your data
+========================================================
+
+Subset data
+========================================================
+
+Subset observations with  'filter'
+
+- filter(dataset, logical criteria on certain columns)
+- use logic operators to set (multiple) criteria
+- eg. filter(cars, speed<8)
+
+Subset variables with 'select'
+- select(dataset, name of column1, name of column2, ...)
+- use helper functions to define the columns more efficiently
+  - select(cars, - dist) removes column dist from dataset
+  - select(cars, speed:dist) selects all columns between column 'speed' and column 'dist' 
+
+
+Make new variables
+=======================================================
+
+compute and append one or more new columns with 'mutate'
+- mutate(dataset, new_column = operation between columns)
+- eg. mutate(iris, Sepal.Area = Sepal.Length*Sepal.Width, Sepal.Petal.fraction = Sepal.Length/Petal.Length )
+- use functions to calculate more complex measurements
+- transmute() works as mutate() but removes the original columns
+
+
+Summarise data
+=======================================================
+
+summarise data into one single row of values
+
+- summarise(iris, avg=mean(Sepal.Length))
+- summarise_all(iris, funs(mean))
+
+
+apply transformations to groups of the data
+=======================================================
+
+The function 'group_by' allows you to  define groups in the data
+When these grouped dataset is used to summarise or to mutate data,
+the transformations are done per group.
+
+- iris %>% group_by(Species) %>% summarise(avg=mean(Sepal.Length))
+- iris %>% group_by(Species) %>% summarise_all(funs(mean))
+- iris %>% group_by(Species) %>% mutate(Sepal.Length.log=log(Sepal.Length))
+
+
+Joining datatables
+========================================================
+
+lef_join(x, y, by = NULL,
+copy=FALSE, suffix=c(“.x”,“.y”),…)
+Join matching values from y to x.
+
+right_join(x, y, by = NULL, copy =
+FALSE, suffix=c(“.x”,“.y”),…)
+Join matching values from x to y.
+
+inner_join(x, y, by = NULL, copy =
+FALSE, suffix=c(“.x”,“.y”),…)
+Join data. Retain only rows with
+matches.
+
+full_join(x, y, by = NULL,
+copy=FALSE, suffix=c(“.x”,“.y”),…)
+Join data. Retain all values, all rows
+
+
+
+References
+========================================================
+
+Book: <http://r4ds.had.co.nz/index.html>
+
+Cheat sheets: <https://www.rstudio.com/resources/cheatsheets/>
+
+Vignette: <https://cran.r-project.org/web/packages/dplyr/dplyr.pdf>
 
 
 
 
+
+
+
+First Slide
+========================================================
+
+For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+Slide With Code
+========================================================
+
+
+```r
+summary(cars)
+```
 
 ```
-Error in eval(expr, envir, enclos) : could not find function "%>%"
+     speed           dist       
+ Min.   : 4.0   Min.   :  2.00  
+ 1st Qu.:12.0   1st Qu.: 26.00  
+ Median :15.0   Median : 36.00  
+ Mean   :15.4   Mean   : 42.98  
+ 3rd Qu.:19.0   3rd Qu.: 56.00  
+ Max.   :25.0   Max.   :120.00  
 ```
+
+Slide With Plot
+========================================================
+
+![plot of chunk unnamed-chunk-2](tidyverse-presentation-figure/unnamed-chunk-2-1.png)

@@ -20,7 +20,7 @@ apply(comm,1,function(x) sum(x>0))
 apply(comm,2,function(x) sum(x>0))
 
 #compute the mean abundance of species with more than 2 individuals in each site
-apply(comm,1,function(x) mean(x>2))
+apply(comm,1,function(x) mean(x[x>2]))
 
 #compute the relative abundance (save the object for later use)
 ps <- apply(comm,1,function(x) x/sum(x))
@@ -62,6 +62,8 @@ lapply(mtcars,function(x,cov) cor(x,cov),cov=rnd)
 #Hard
 #get the car name which get the maximum value for each colmuns
 lapply(mtcars,function(x,row_name) row_name[which.max(x)],row_name=rownames(mtcars))
+#another solution thanks to @Frederik
+lapply(mtcars,function(x) rownames(mtcars)[which(x == max(x))])
 ```
 
 # sapply

@@ -12,7 +12,7 @@ output: html_document
 library(dplyr)
 library(tidyr)
 
-df1 <- read.txt()
+
 ```
 
 
@@ -71,7 +71,8 @@ the functions 'seperate' and 'unite' let you, resprectively, split the content o
 nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
 
 
-nr_seedlings_tidy <- 
+nr_seedlings_tidy <- gather(nr_seedlings, key="julian_day", value = "nr_seedlings", JD233:JD399) 
+nr_seedlings_tidy <- nr_seedlings %>% gather(key="julian_day", value = "nr_seedlings", JD233:JD399) 
 ```
 
 
@@ -82,7 +83,7 @@ nr_seedlings_tidy <-
 
 plant_size <- read.table("data/plant_size.txt", header=T)
 
-plant_size_tidy <- 
+plant_size_tidy <- plant_size %>% separate()
 
 
 ```
@@ -109,7 +110,7 @@ We will work with the dataset 'nr_seedlings_tidy'
 4. extract measurements that were taken before Julian day 331 for flowers 'b' and keep all columns except the column 'table'
 
 ```{r}
-
+nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
 ```
 
 ## 3.2 calculate new variables

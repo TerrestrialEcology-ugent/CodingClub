@@ -60,9 +60,9 @@ sequential manipulations of a dataset.
 
 Use '%>%' to connect manipulations
 
-```{r}
+
 cars %>% as.tibble()
-```
+
 
 
 creating tidy data
