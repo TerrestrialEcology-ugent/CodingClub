@@ -11,6 +11,8 @@
 
 * <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf" target="_blank">An introduction to R</a>: The official R introduction written by those who helped creating and maintaining R
 
+* Blog aggregators like <a href="https://www.r-bloggers.com/" target="_blank">R-bloggers</a> or <a href="https://datascienceplus.com/" target="_blank">Data Science +</a> are worth checking regularly
+
 ### Intermediate, consolidating the foundations
 
 * <a href="http://heather.cs.ucdavis.edu/~matloff/132/NSPpart.pdf" target="_blank">The Art of R Programming</a>: A nice (free) book providing ample knowledge to understand how to programm in R
