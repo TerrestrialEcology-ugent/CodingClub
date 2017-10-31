@@ -1,0 +1,360 @@
+<p>Mastering *apply ======================================================== author: Lionel Hertzog<br />
+date: 22/09/2017 autosize: true</p>
+<h1 id="aim-of-todays-session">Aim of today's session</h1>
+<p>Learn to master the *apply functions:</p>
+<ul>
+<li>The basics: apply, lapply and sapply</li>
+<li>Going crazy: mapply</li>
+<li>Doing some magic: plyr</li>
+</ul>
+<h1 id="apply">apply</h1>
+<p>Definition: apply a <strong>function</strong> to the specified <strong>margins</strong> of an <strong>array</strong></p>
+<ul>
+<li>What is a function?</li>
+<li>What is a margin?</li>
+<li>What is an array?</li>
+</ul>
+<h1 id="apply-1">apply</h1>
+<p>Definition: apply a <strong>function</strong> to the specified <strong>margins</strong> of an <strong>array</strong></p>
+<ul>
+<li>What is a function?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span>function(x) {
+    out &lt;-<span class="st"> </span>x^<span class="dv">2</span>
+    <span class="kw">return</span>(out)
+}</code></pre></div>
+<h1 id="apply-2">apply</h1>
+<p>Definition: apply a <strong>function</strong> to the specified <strong>margins</strong> of an <strong>array</strong></p>
+<ul>
+<li>What is an array?</li>
+</ul>
+<p>An array is a structured collection of data of the <strong>same</strong> type (numeric ...)</p>
+<div class="figure">
+<img src="apply_presentation-figure/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" />
+<p class="caption">plot of chunk unnamed-chunk-3</p>
+</div>
+<h1 id="apply-3">apply</h1>
+<p>Definition: apply a <strong>function</strong> to the specified <strong>margins</strong> of an <strong>array</strong></p>
+<ul>
+<li>What is a margin?</li>
+</ul>
+<div class="figure">
+<img src="apply_presentation-figure/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" />
+<p class="caption">plot of chunk unnamed-chunk-4</p>
+</div>
+<h1 id="apply-4">apply</h1>
+<p>How does it work:</p>
+<p><strong>apply( <em>some_array</em> , <em>some_margins</em> , <em>some_functions</em> )</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># create an array</span>
+some_array &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">25</span>), <span class="dt">nrow =</span> <span class="dv">5</span>)
+<span class="co"># determine the margins of the array</span>
+<span class="kw">dim</span>(some_array)</code></pre></div>
+<pre><code>[1] 5 5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># get the sum for each row</span>
+<span class="kw">apply</span>(some_array, <span class="dv">1</span>, sum)</code></pre></div>
+<pre><code>[1]  1.3636228  1.8074370  4.4374781 -1.6033325  0.7605303</code></pre>
+<h1 id="apply-5">apply</h1>
+<p>For custom functions we can either explicitely create a function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span>function(x) <span class="kw">sum</span>(x^<span class="dv">2</span>)
+<span class="kw">apply</span>(some_array, <span class="dv">1</span>, foo)</code></pre></div>
+<pre><code>[1] 2.424165 3.027610 7.607095 3.204467 3.360290</code></pre>
+<p>Or we can use anonymous function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">apply</span>(some_array, <span class="dv">1</span>, function(x) <span class="kw">sum</span>(x^<span class="dv">2</span>))</code></pre></div>
+<pre><code>[1] 2.424165 3.027610 7.607095 3.204467 3.360290</code></pre>
+<h1 id="apply-6">apply</h1>
+<p>Time for some exercise, see <strong>apply_exo.Rmd</strong> file, we will use a standard community dataset format:</p>
+<pre><code>    Sp1 Sp2 Sp3 Sp4 Sp5 Sp6 Sp7 Sp8 Sp9 Sp10
+Pl1   2   4   2   1   3   2   4   3   2    3
+Pl2   2   2   3   2   2   2   3   1   3    2
+Pl3   1   1   3   0   2   0   5   1   5    2
+Pl4   2   4   1   2   1   2   2   2   1    3
+Pl5   1   2   1   1   2   3   0   1   4    4</code></pre>
+<h1 id="listapply">l(ist)apply</h1>
+<p>Official definition:</p>
+<p>lapply returns a <strong>list</strong> of the same length as X, each element of which is the result of <strong>applying FUN</strong> to the corresponding element of X.</p>
+<p>...</p>
+<p>lapply(X, FUN, ...)</p>
+<p>...</p>
+<p>X a vector (atomic or list) or an expression object. Other objects (including classed objects) will be <strong>coerced</strong> by base::as.list.</p>
+<h1 id="listapply-1">l(ist)apply</h1>
+<p>lapply in action:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(some_list &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="kw">rnorm</span>(<span class="dv">5</span>)))</code></pre></div>
+<pre><code>[[1]]
+[1] 1 1 1 1 1
+
+[[2]]
+[1] -1.060375  1.074164  1.049025 -2.598868  1.108946</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(some_list, max)</code></pre></div>
+<pre><code>[[1]]
+[1] 1
+
+[[2]]
+[1] 1.108946</code></pre>
+<h1 id="listapply-2">l(ist)apply</h1>
+<p>lapply in action:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(some_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">X1 =</span> <span class="kw">runif</span>(<span class="dv">5</span>), <span class="dt">X2 =</span> <span class="kw">rnorm</span>(<span class="dv">5</span>)))</code></pre></div>
+<pre><code>         X1         X2
+1 0.4530002  0.4938210
+2 0.2368314  2.0156364
+3 0.5802533 -1.7208819
+4 0.3738481  0.2464223
+5 0.9198469 -0.2011934</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(some_df, mean)</code></pre></div>
+<pre><code>$X1
+[1] 0.512756
+
+$X2
+[1] 0.1667609</code></pre>
+<h1 id="listapply-3">l(ist)apply</h1>
+<p>Again we can define and use (anonymous) custom functions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># a useless function</span>
+<span class="kw">lapply</span>(some_df, function(x) <span class="kw">c</span>(x[<span class="dv">1</span>] +<span class="st"> </span><span class="dv">1</span>, x[<span class="dv">2</span>] +<span class="st"> </span><span class="dv">2</span>))</code></pre></div>
+<pre><code>$X1
+[1] 1.453000 2.236831
+
+$X2
+[1] 1.493821 4.015636</code></pre>
+<h1 id="listapply-4">l(ist)apply</h1>
+<p>More interesting say we want to simulate some data based on the observed mean/sd of a dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(some_df, function(x) <span class="kw">rnorm</span>(<span class="dv">5</span>, <span class="kw">mean</span>(x), <span class="kw">sd</span>(x)))</code></pre></div>
+<pre><code>$X1
+[1] 0.84257946 0.02856749 0.47977565 0.69042806 0.79316138
+
+$X2
+[1] -0.1398045 -2.5979927 -1.6388654  2.6916782 -1.9919746</code></pre>
+<h1 id="listapply-5">l(ist)apply</h1>
+<p>One can pass <strong>argument</strong> to the function by naming them:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(<span class="kw">round</span>(some_df, <span class="dv">2</span>), paste, <span class="dt">collapse =</span> <span class="st">&quot;-&quot;</span>)</code></pre></div>
+<pre><code>$X1
+[1] &quot;0.45-0.24-0.58-0.37-0.92&quot;
+
+$X2
+[1] &quot;0.49-2.02--1.72-0.25--0.2&quot;</code></pre>
+<h1 id="listapply-6">l(ist)apply</h1>
+<p>Time for some exercice, this time we'll use the <strong>mtcars</strong> dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(mtcars)
+<span class="kw">head</span>(mtcars)</code></pre></div>
+<pre><code>                   mpg cyl disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre>
+<h1 id="simplifyapply">s(implify)apply</h1>
+<p>Same as <em>lapply</em> but this time the output will be a <strong>vector</strong> or a <strong>matrix</strong> instead of a <strong>list</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># average value per column</span>
+<span class="kw">sapply</span>(mtcars, mean)</code></pre></div>
+<pre><code>       mpg        cyl       disp         hp       drat         wt 
+ 20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
+      qsec         vs         am       gear       carb 
+ 17.848750   0.437500   0.406250   3.687500   2.812500 </code></pre>
+<h1 id="simplifyapply-1">s(implify)apply</h1>
+<p>This is useful when one wants to display the information in a nice and compact format:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># write up own summary statistic function</span>
+sum_stat &lt;-<span class="st"> </span>function(x) {
+    quants &lt;-<span class="st"> </span><span class="kw">quantile</span>(x, <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>), <span class="dt">names =</span> <span class="ot">FALSE</span>)
+    <span class="kw">return</span>(<span class="kw">c</span>(<span class="dt">Q25 =</span> quants[<span class="dv">1</span>], <span class="dt">Median =</span> quants[<span class="dv">2</span>], <span class="dt">Q75 =</span> quants[<span class="dv">3</span>]))
+}
+<span class="kw">sapply</span>(mtcars, sum_stat)</code></pre></div>
+<pre><code>          mpg cyl    disp    hp  drat      wt    qsec vs am gear carb
+Q25    15.425   4 120.825  96.5 3.080 2.58125 16.8925  0  0    3    2
+Median 19.200   6 196.300 123.0 3.695 3.32500 17.7100  0  0    4    2
+Q75    22.800   8 326.000 180.0 3.920 3.61000 18.9000  1  1    4    4</code></pre>
+<h1 id="simplifyapply-2">s(implify)apply</h1>
+<p>But it will only work the <strong>result</strong> of applying the function to <strong>each element</strong> of the object is of the <strong>same length</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># sapply only coerce response into arrays when all output are of similar</span>
+<span class="co"># length</span>
+(<span class="kw">sapply</span>(mtcars, function(x) x[x &gt;<span class="st"> </span><span class="dv">10</span>]))</code></pre></div>
+<pre><code>$mpg
+ [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2
+[15] 10.4 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4
+[29] 15.8 19.7 15.0 21.4
+
+$cyl
+numeric(0)
+
+$disp
+ [1] 160.0 160.0 108.0 258.0 360.0 225.0 360.0 146.7 140.8 167.6 167.6
+[12] 275.8 275.8 275.8 472.0 460.0 440.0  78.7  75.7  71.1 120.1 318.0
+[23] 304.0 350.0 400.0  79.0 120.3  95.1 351.0 145.0 301.0 121.0
+
+$hp
+ [1] 110 110  93 110 175 105 245  62  95 123 123 180 180 180 205 215 230
+[18]  66  52  65  97 150 150 245 175  66  91 113 264 175 335 109
+
+$drat
+numeric(0)
+
+$wt
+numeric(0)
+
+$qsec
+ [1] 16.46 17.02 18.61 19.44 17.02 20.22 15.84 20.00 22.90 18.30 18.90
+[12] 17.40 17.60 18.00 17.98 17.82 17.42 19.47 18.52 19.90 20.01 16.87
+[23] 17.30 15.41 17.05 18.90 16.70 16.90 14.50 15.50 14.60 18.60
+
+$vs
+numeric(0)
+
+$am
+numeric(0)
+
+$gear
+numeric(0)
+
+$carb
+numeric(0)</code></pre>
+<h1 id="simplifyapply-3">s(implify)apply</h1>
+<p>Time for some exercice, we'll use again the <strong>mtcars</strong> dataset.</p>
+<h1 id="simplifyapply-4">s(implify)apply</h1>
+<p>sapply for lazy coders:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(<span class="dv">1</span>:<span class="dv">11</span>, function(data, index) <span class="kw">mean</span>(data[, index]), <span class="dt">data =</span> mtcars)</code></pre></div>
+<pre><code> [1]  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250
+ [7]  17.848750   0.437500   0.406250   3.687500   2.812500</code></pre>
+<h1 id="tabularapply">t(abular)apply</h1>
+<p>Only shortly shown here, very similar to <strong>aggregate</strong>, <strong>by</strong> or the <strong>dplyr-groupy_by-summarise</strong>.</p>
+<p><em>tapply</em> return the results of applying a function to <strong>subsets</strong> of the data as defined by <strong>one or more grouping variables</strong>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># get the mean miles per gallon for each gear levels:</span>
+<span class="kw">tapply</span>(mtcars$mpg, mtcars$gear, mean)</code></pre></div>
+<pre><code>       3        4        5 
+16.10667 24.53333 21.38000 </code></pre>
+<h1 id="mulitpleapply">m(ulitple)apply</h1>
+<p>Apply a function to each <strong>set</strong> of elements in the <strong>multiple objects</strong> given as inputs (so easy to understand!)</p>
+<p>mapply( <em>some_function</em> , <em>object1</em> , <em>object2</em> , ...)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">letters[<span class="dv">1</span>:<span class="dv">4</span>]</code></pre></div>
+<pre><code>[1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="dv">1</span>:<span class="dv">4</span></code></pre></div>
+<pre><code>[1] 1 2 3 4</code></pre>
+<p>Can you guess what will be the ouput of:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mapply</span>(rep, letters[<span class="dv">1</span>:<span class="dv">4</span>], <span class="dv">1</span>:<span class="dv">4</span>)</code></pre></div>
+<h1 id="mulitpleapply-1">m(ulitple)apply</h1>
+<p>The answer is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mapply</span>(rep, letters[<span class="dv">1</span>:<span class="dv">4</span>], <span class="dv">1</span>:<span class="dv">4</span>)</code></pre></div>
+<pre><code>$a
+[1] &quot;a&quot;
+
+$b
+[1] &quot;b&quot; &quot;b&quot;
+
+$c
+[1] &quot;c&quot; &quot;c&quot; &quot;c&quot;
+
+$d
+[1] &quot;d&quot; &quot;d&quot; &quot;d&quot; &quot;d&quot;</code></pre>
+<h1 id="mulitpleapply-2">m(ulitple)apply</h1>
+<p><strong>Important</strong>: mapply does not apply a function to <strong>all</strong> combination of elements, for that purpose one need to use <strong>outer</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">outer</span>(<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">4</span>, <span class="st">&quot;+&quot;</span>)</code></pre></div>
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    2    3    4    5
+[2,]    3    4    5    6
+[3,]    4    5    6    7
+[4,]    5    6    7    8</code></pre>
+<h1 id="mulitpleapply-3">m(ulitple)apply</h1>
+<p>Usage of mapply, for example when one wants to get the correlation between pairs of variables in two datasets:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># correlation between two sets of variables</span>
+mtcars_std &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">sapply</span>(mtcars, function(x) (x -<span class="st"> </span><span class="kw">mean</span>(x))/<span class="kw">sd</span>(x)))
+<span class="kw">mapply</span>(cor, <span class="dt">x =</span> mtcars, <span class="dt">y =</span> mtcars_std)</code></pre></div>
+<pre><code> mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+   1    1    1    1    1    1    1    1    1    1    1 </code></pre>
+<h1 id="mulitpleapply-4">m(ulitple)apply</h1>
+<p>Time for some exercices</p>
+<h1 id="plyr">plyr</h1>
+<p>The basic idea of <strong>plyr</strong> is to control the <strong>class</strong> of the object outputed after applying a function to some object.</p>
+<p>This is done through using letter shortcuts: - <strong>a</strong> for array - <strong>d</strong> for data frame - <strong>l</strong> for list - **_** for no output</p>
+<h1 id="plyr-1">plyr</h1>
+<p>The plyr functions always ends with <strong>ply</strong>, the first letter is the input format, the second letter is the output format.</p>
+<ul>
+<li><strong>la</strong>ply : I give you a <strong>l</strong>ist as input and I would like an <strong>a</strong>rray as output</li>
+<li><strong>ad</strong>ply : I give you an array as input and would like a data frame as output, <strong>note</strong> that when using a*ply you need to specify the <strong>margins</strong> just like with apply</li>
+<li><strong>ld</strong>ply : ???</li>
+<li><strong>ll</strong>ply : ???</li>
+</ul>
+<h1 id="plyr-2">plyr</h1>
+<p>I have a community matrix and I would like to standardize the rows by the maximum of each row and to have a data frame as output for latter analysis:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">adply</span>(comm, <span class="dv">1</span>, function(x) <span class="kw">round</span>(x/<span class="kw">max</span>(x), <span class="dv">2</span>))</code></pre></div>
+<pre><code>   X1  Sp1  Sp2  Sp3  Sp4  Sp5  Sp6 Sp7  Sp8  Sp9 Sp10
+1 Pl1 0.50 1.00 0.50 0.25 0.75 0.50 1.0 0.75 0.50 0.75
+2 Pl2 0.67 0.67 1.00 0.67 0.67 0.67 1.0 0.33 1.00 0.67
+3 Pl3 0.20 0.20 0.60 0.00 0.40 0.00 1.0 0.20 1.00 0.40
+4 Pl4 0.50 1.00 0.25 0.50 0.25 0.50 0.5 0.50 0.25 0.75
+5 Pl5 0.25 0.50 0.25 0.25 0.50 0.75 0.0 0.25 1.00 1.00</code></pre>
+<h1 id="plyr-3">plyr</h1>
+<p>Now I would like to know the quantiles for each species and get the output in a list:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">alply</span>(comm, <span class="dv">2</span>, quantile, <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>))</code></pre></div>
+<pre><code>$`1`
+25% 50% 75% 
+  1   2   2 
+
+$`2`
+25% 50% 75% 
+  2   2   4 
+
+$`3`
+25% 50% 75% 
+  1   2   3 
+
+$`4`
+25% 50% 75% 
+  1   1   2 
+
+$`5`
+25% 50% 75% 
+  2   2   2 
+
+$`6`
+25% 50% 75% 
+  2   2   2 
+
+$`7`
+25% 50% 75% 
+  2   3   4 
+
+$`8`
+25% 50% 75% 
+  1   1   2 
+
+$`9`
+25% 50% 75% 
+  2   3   4 
+
+$`10`
+25% 50% 75% 
+  2   3   3 
+
+attr(,&quot;split_type&quot;)
+[1] &quot;array&quot;
+attr(,&quot;split_labels&quot;)
+     X1
+1   Sp1
+2   Sp2
+3   Sp3
+4   Sp4
+5   Sp5
+6   Sp6
+7   Sp7
+8   Sp8
+9   Sp9
+10 Sp10</code></pre>
+<h1 id="plyr-4">plyr</h1>
+<p>Using &quot;_&quot; as the second letter do not create any output, <strong>but</strong> the side-effects of calling the functions are kept, useful for functions like: plot, print ...</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># make an histogram of species abundance</span>
+<span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">3</span>))
+<span class="kw">a_ply</span>(comm, <span class="dv">2</span>, hist, <span class="dt">xlab =</span> <span class="st">&quot;Abundance&quot;</span>)</code></pre></div>
+<div class="figure">
+<img src="apply_presentation-figure/unnamed-chunk-27-1.png" alt="plot of chunk unnamed-chunk-27" />
+<p class="caption">plot of chunk unnamed-chunk-27</p>
+</div>
+<h1 id="plyr-5">plyr</h1>
+<p>Using &quot;_&quot; as the second letter do not create any output, <strong>but</strong> the side-effects of calling the functions are kept, useful for functions like: plot, print ...</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">a_ply</span>(comm, <span class="dv">1</span>, function(x) <span class="kw">print</span>(<span class="kw">summary</span>(x)))</code></pre></div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    1.0     2.0     2.5     2.6     3.0     4.0 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    2.00    2.00    2.20    2.75    3.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    1.00    1.50    2.00    2.75    5.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    1.25    2.00    2.00    2.00    4.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    1.00    1.50    1.90    2.75    4.00 </code></pre>

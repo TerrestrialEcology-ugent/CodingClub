@@ -19,6 +19,8 @@
 
 * <a href="http://r4ds.had.co.nz/index.html" target="_blank">R for data science</a>: A free e-book from Hadley Wickham the dplyr/ggplot2 gouru with a clear layout to master R workflow from data import to building models and producing nice figures
 
+* <a href="https://www.jessesadler.com/post/network-analysis-with-r/" target="_blank">Network analysis with R</a> and <a href="https://datascienceplus.com/network-analysis-of-game-of-thrones/" target="_blank">Games of thrones networks</a>: two blog posts about the use of different packages for visualizaing and analyzing networks in R. 
+
 
 ### Advanced, when you start writing your own functions
 
