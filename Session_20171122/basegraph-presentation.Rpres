@@ -1,0 +1,636 @@
+<style>
+.reveal .state-background {
+  background: white;
+} 
+.reveal pre code {
+  font-size: 1em;
+}
+</style>
+
+R Base Graphics
+========================================================
+author: 
+width: 1500
+height: 900
+date: 
+autosize: false
+
+R graphics systems
+========================================================
+
+GrDevices: the R graphics engine, provides infrastructure for:
+
+- "graphics": base graphics
+- "grid": newer, includes lattice and ggplot2 (see later this afternoon)
+
+Both work quite differently.
+
+Base graphics pros:
+- very flexible, you can make virtually any type of graph, exactly how you want
+- good for very quick data visualization
+
+Cons:
+- complex graphs are not straightforward, if the graph can be made with ggplot, this will require much less code
+- ggplot arguably has more pleasing defaults
+
+R base graphics
+========================================================
+
+High-level functions --> complete plots
+- plot()
+- barplot()
+- hist()
+
+Low-level functions --> add to an exisiting plot
+- lines()
+- points()
+- legend()
+- text ()
+
+Some do both, via "add=TRUE/FALSE"
+- symbols(x,y, ..., add=TRUE)
+
+The plot() function
+========================================================
+
+Probably most important function in base graphics
+
+Generic function: does different things with numeric data, factors, matrices, etc.
+
+For example, with x and y numeric, FAC a factor, MAT a matrix:
+- plot(x): index plot of x versus its index
+- plot(x,y): scatterplot
+- plot(FAC, y): boxplot
+- plot (x, FAC): stripchart
+- plot (FAC,FAC): spineplot, barchart
+- plot(MAT): scatterplot matrix
+
+Some examples using plot()
+========================================================
+
+```{r}
+head(iris)
+```
+
+Index plot
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length)
+```
+
+Scatterplot
+========================================================
+<br>
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Width,iris$Sepal.Length)
+```
+***
+This gives same result:
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length~iris$Sepal.Width)
+```
+
+Boxplot
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Species,iris$Sepal.Length)
+```
+
+Plot all variables pairwise
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+plot(iris)
+```
+pairs(iris) gives same result
+
+Plot() on linear model object
+========================================================
+
+```{r, echo=TRUE,fig.width=5,fig.height=5}
+model <- lm(Sepal.Length ~ Sepal.Width,data=iris)
+plot(model)
+```
+
+Plot() on PCA
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+pca <- princomp(iris[-5])
+plot(pca)
+```
+plot(pca) shows a scree plot...
+
+Plot() on PCA
+========================================================
+
+For a biplot, use biplot()
+```{r, echo=TRUE,fig.align="center"}
+biplot(pca)
+```
+
+Some other useful base graphic functions
+========================================================
+
+Histograms: hist() function
+```{r, echo=TRUE,fig.align="center"}
+hist(iris$Sepal.Length)
+```
+
+Some other useful base graphic functions
+========================================================
+
+Bar plots: barplot() function
+
+(remember dplyr?)
+```{r, echo=TRUE,fig.align="center"}
+library(dplyr)
+bars <- iris %>% group_by(Species) %>% summarise_all(funs(mean,sd))
+barplot(bars$Sepal.Length_mean,names=bars$Species)
+```
+
+Lots of other possibilities...
+========================================================
+
+- 3-D plots
+- sunflower plots
+- mosaic plots
+- added variable plots
+- effect plots
+- maps and spatial visualizations
+- trees and network diagrams
+- structural equation model graphs
+
+Side note: correlation diagrams
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+library(corrplot)
+corrplot(cor(mtcars),method="ellipse")
+
+```
+
+Side note: correlation diagrams
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+corrplot.mixed(cor(mtcars),lower="number",upper="ellipse")
+
+```
+
+Graphical parameters
+========================================================
+
+Some can be set globally, using par() function, e.g.:
+
+- par(mar=c(5.1, 4.1, 4.1, 2.1)): sets margins in order bottom, left, top, right
+- par(cex=X): makes text and points X times larger
+- par(cex.main=X): makes the main axis title X times larger
+- see: ?par() for a full list
+
+Most can be set in plotting functions:
+- plot(x, y, cex=2)
+
+NOTE: margins etc. are expressed in lines, par(mai=c()) does the same in inches
+
+Cheat sheet: http://www.gastonsanchez.com/r-graphical-parameters-cheatsheet.pdf
+
+Plot types
+========================================================
+
+plot(x ,y ,type="p")
+```{r, echo=FALSE,fig.width=15,fig.height=10,fig.align="center"}
+x <- 0:5
+y <- 2*x+1
+par(mfcol=c(2,3),cex=1.2)
+plot(x,y,type="p",main="type=\"p\"")
+plot(x,y,type="l",main="type=\"l\"")
+plot(x,y,type="b",main="type=\"b\"")
+plot(x,y,type="o",main="type=\"o\"")
+plot(x,y,type="h",main="type=\"h\"")
+plot(x,y,type="s",main="type=\"s\"")
+```
+
+Color, point type, line type
+========================================================
+<br>
+```{r, echo=TRUE,fig.align="center"}
+plot(x,y,type="b")
+```
+***
+<br>
+```{r, echo=TRUE,fig.align="center"}
+plot(x,y,type="b",col=2,pch=2,lty=2)
+```
+
+Customizing graphs
+========================================================
+
+R base graphics works like painting on a canvas  
+
+Each new element is placed on top of the existing graph  
+
+Typically: 
+- create basic plot with high-level function
+- add elements using low-level function (lines, points, error bars, legends, etc.)
+
+Back to the bar plot...
+========================================================
+
+Let's make a grouped bar plot.
+
+Barplot() only takes vectors or matrices with the values to be plotted.
+
+One quick option:
+```{r, echo=TRUE,fig.align="center"}
+rbind(bars$Sepal.Length_mean,bars$Sepal.Width_mean)
+```
+Alternatively, for fans of the tidyverse:
+```{r, echo=TRUE,fig.align="center"}
+library(tidyr)
+library(tibble)
+groupedbars <- bars %>% select(Species,Sepal.Length_mean,Sepal.Width_mean) %>% gather(Sepal.Length_mean,Sepal.Width_mean,key=sepal_petal,value=length) %>% spread(Species,length) %>% remove_rownames %>% column_to_rownames(var="sepal_petal") %>% as.matrix
+groupedbars
+```
+
+Back to the bar plot...
+========================================================
+
+Let's make a grouped bar plot
+```{r, echo=TRUE,fig.align="center"}
+barplot(groupedbars,names=colnames(groupedbars))
+```
+<br>
+This is stacked, nice but not what we want.
+
+Back to the bar plot...
+========================================================
+
+Add: beside=TRUE
+```{r, echo=TRUE,fig.align="center"}
+barplot(groupedbars,names=bars$Species, beside=TRUE)
+```
+Better!
+
+Back to the bar plot...
+========================================================
+
+Add a legend
+```{r, echo=TRUE,fig.align="center"}
+barplot(groupedbars, names=bars$Species,
+        beside=T, legend=rownames(groupedbars))
+```
+
+Back to the bar plot...
+========================================================
+
+Adjust Y-axis limits
+```{r, echo=TRUE,fig.align="center"}
+barplot(groupedbars, names=bars$Species,
+        beside=T, legend=rownames(groupedbars),ylim=c(0,10))
+```
+
+Back to the bar plot...
+========================================================
+
+Legend not nice (names of variables). We can just add legend to plot using legend():
+```{r, echo=TRUE,fig.align="center"}
+barplot(groupedbars, names=bars$Species, beside=T, ylim=c(0,10))
+legend("topright",c("Sepal length","Sepal width"),fill=gray.colors(2))
+```
+<br>
+gray.colors(x) is the range of colors used by default by barplot(), with x = number of colors.  
+Legend() also takes coordinates for placement, other symbols, hex colors, etc.
+
+
+Back to the bar plot...
+========================================================
+
+```{r, echo=TRUE,fig.width=7,fig.height=7,fig.align="center"}
+bplot <- barplot(groupedbars, names=bars$Species,beside=T, ylim=c(0,10))
+legend("topleft",c("Sepal length","Sepal width"),fill=gray.colors(2))
+arrows(bplot[1,],bars$Sepal.Length_mean,bplot[1,],bars$Sepal.Length_mean+
+  bars$Sepal.Length_sd,code=2,angle=90,length=0.05)
+arrows(bplot[2,],bars$Sepal.Width_mean,bplot[2,],bars$Sepal.Width_mean+
+  bars$Sepal.Width_sd,code=2,angle=90,length=0.05)
+```
+How about some error bars...
+
+Back to the scatterplot...
+========================================================
+
+Add a main title, change axis titles
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length~iris$Sepal.Width, main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length")
+```
+Back to the scatterplot...
+========================================================
+
+Remove box
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length~iris$Sepal.Width, main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length",bty="l")
+```
+Back to the scatterplot...
+========================================================
+
+For fun, let's build this from scratch...
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+```
+
+Back to the scatterplot...
+========================================================
+
+For fun, let's build this from scratch...
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+axis(1)
+axis(2)
+```
+
+Back to the scatterplot...
+========================================================
+
+For fun, let's build this from scratch...
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+axis(1)
+axis(2)
+points(iris$Sepal.Width,iris$Sepal.Length)
+```
+
+Back to the scatterplot...
+========================================================
+
+For fun, let's build this from scratch...
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+axis(1)
+axis(2)
+points(iris$Sepal.Width,iris$Sepal.Length)
+title(main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length")
+```
+
+Back to the scatterplot...
+========================================================
+
+Now much more customizable. E.g. increase distance from ticks to labels of Y-axis
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+axis(1)
+axis(2,padj=-1.5)
+points(iris$Sepal.Width,iris$Sepal.Length)
+title(main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length")
+```
+
+Back to the scatterplot...
+========================================================
+
+Now much more customizable. Make Y-axis ticks longer. Possibilities = endless.
+```{r, echo=TRUE,fig.align="center"}
+plot.new()
+plot.window(xlim=range(iris$Sepal.Width),ylim=range(iris$Sepal.Length))
+box(bty="l")
+axis(1)
+axis(2,padj=-1.5,tcl=-1)
+points(iris$Sepal.Width,iris$Sepal.Length)
+title(main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length")
+```
+
+Back to the scatterplot...
+========================================================
+
+A few other useful things, trendline:
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length~iris$Sepal.Width, main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length",bty="l")
+abline(lm(iris$Sepal.Length~iris$Sepal.Width))
+```
+
+Back to the scatterplot...
+========================================================
+
+Sometimes you want a reference level:
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length~iris$Sepal.Width, main="Iris sepal dimensions",xlab="Sepal width",ylab="Sepal length",bty="l")
+abline(h=5,col="red")
+text(4.1,4.9, "Sepals are 5 mm long",col="red")
+```
+
+Back to the scatterplot...
+========================================================
+
+We can group by species:
+```{r, echo=TRUE,fig.align="center"}
+plot(iris$Sepal.Length, iris$Sepal.Width, col=iris$Species)
+legend("topright",levels(iris$Species),col=1:length(iris$Species),pch=1)
+```
+
+Back to the scatterplot...
+========================================================
+
+Change colors if you like:
+```{r, echo=TRUE,fig.align="center"}
+palette(c("blue","green","pink"))
+plot(iris$Sepal.Length, iris$Sepal.Width, col=iris$Species)
+legend("topright",levels(iris$Species),col=1:length(iris$Species),pch=1)
+```
+<br>
+Of course you could also build from scratch and add two sets of points.
+
+Add lines to a plot
+========================================================
+
+R knows how to plot time series data:
+```{r, echo=TRUE,fig.width=15,fig.align="center"}
+plot(lynx)
+```
+
+Add lines to a plot
+========================================================
+
+Suppose regular format:
+```{r, echo=TRUE,fig.width=15,fig.align="center"}
+newlynx <- as.data.frame(lynx)
+newlynx$year <- c(1821:1934)
+colnames(newlynx)[1] <- "lynx"
+
+plot(newlynx$year,newlynx$lynx)
+```
+
+Add lines to a plot
+========================================================
+
+Add lines:
+```{r, echo=TRUE,fig.width=15,fig.align="center"}
+newlynx <- as.data.frame(lynx)
+newlynx$year <- c(1821:1934)
+colnames(newlynx)[1] <- "lynx"
+
+plot(newlynx$year,newlynx$lynx)
+lines(lynx~year,data=newlynx,col="gray")
+```
+
+Multipanel plots
+========================================================
+
+One approach:
+```{r, echo=TRUE,fig.align="center"}
+par(mfrow=c(2,2))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Species,iris$Sepal.Length)
+hist(iris$Sepal.Length)
+hist(iris$Sepal.Width)
+```
+
+Multipanel plots
+========================================================
+
+Suppose only 3 plots:
+```{r, echo=TRUE,fig.align="center"}
+par(mfrow=c(2,2))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Species,iris$Sepal.Length)
+hist(iris$Sepal.Length)
+```
+
+Multipanel plots
+========================================================
+
+More flexible: layout()
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Species,iris$Sepal.Length)
+hist(iris$Sepal.Length)
+```
+
+Multipanel plots
+========================================================
+
+More flexible: layout()
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE),widths=c(2,1), heights=c(3,2))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Species,iris$Sepal.Length)
+hist(iris$Sepal.Length)
+```
+
+Exporting to .eps files
+========================================================
+
+Journals often ask .eps file for vectorial graphs.  
+You can set the dimensions of the file in postscript().
+```{r, echo=TRUE, eval=FALSE}
+setEPS()
+postscript("nice eps file.eps",width=5,height=5)
+layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE),widths=c(2,1), heights=c(3,2))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Species,iris$Sepal.Length)
+hist(iris$Sepal.Length)
+dev.off()
+```
+R only uses Helvetica, Times, and Courier as fonts for postscript files.
+Solution: package "extrafont"
+```{r, echo=TRUE, eval=FALSE}
+install.packages("extrafont")
+library(extrafont)
+font_import()
+```
+Then before plot code, use:
+```{r, echo=TRUE, eval=FALSE}
+library(extrafont)
+loadfonts(device="postscript")
+```
+
+Mind the margins
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1), heights=c(1,1))
+plot(iris$Sepal.Width,iris$Sepal.Length)
+plot(iris$Petal.Width,iris$Sepal.Length)
+plot(iris$Sepal.Width,iris$Petal.Length)
+plot(iris$Petal.Width,iris$Petal.Length)
+```
+
+Remove redundant axis labels
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1), heights=c(1,1))
+plot(iris$Sepal.Width,iris$Sepal.Length,xlab='')
+plot(iris$Petal.Width,iris$Sepal.Length,xlab='',ylab='')
+plot(iris$Sepal.Width,iris$Petal.Length)
+plot(iris$Petal.Width,iris$Petal.Length,ylab='')
+```
+
+Bring plots closer together (decrease bottom margin)
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1), heights=c(1,1))
+par(mar=c(2, 4, 4, 2))
+plot(iris$Sepal.Width,iris$Sepal.Length,xlab='')
+plot(iris$Petal.Width,iris$Sepal.Length,xlab='',ylab='')
+plot(iris$Sepal.Width,iris$Petal.Length)
+plot(iris$Petal.Width,iris$Petal.Length,ylab='')
+```
+<br>
+Looks better, but now labels fall outside the bottom margin.
+
+Make bottom margin of last two figures big again
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1), heights=c(1,1))
+par(mar=c(2, 4, 4, 2))
+plot(iris$Sepal.Width,iris$Sepal.Length,xlab='')
+plot(iris$Petal.Width,iris$Sepal.Length,xlab='',ylab='')
+par(mar=c(5, 4, 4, 2))
+plot(iris$Sepal.Width,iris$Petal.Length)
+plot(iris$Petal.Width,iris$Petal.Length,ylab='')
+```
+<br>
+Now the labels are back, but four figures squeezed into identical-sized matrix cells
+
+Solution: define widths and heights exactly, and adjust margins
+========================================================
+
+However:
+- layout() uses cm
+- par(mar) uses lines
+- par(mai) uses inches
+
+5 lines = 1 inch = 2.54 cm  
+
+Note: layout changes number of lines per inch depending on number of rows and columns.  
+This behavior can be undone with  a "par(cex=1)" then "par(mar=c(.,.,.,.))" statement after the layout() statement.
+
+Safest bet: convert everything to inches or cm for consistent results (use par(mai))
+
+Solution
+========================================================
+
+```{r, echo=TRUE,fig.align="center"}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(lcm(3*2.54),lcm(3*2.54)),heights=c(lcm(3*2.54),lcm((3+0.5)*2.54)))
+par(mai=c(0.2, 0.7, 0.4, 0))
+plot(iris$Sepal.Width,iris$Sepal.Length,xlab='')
+plot(iris$Petal.Width,iris$Sepal.Length,xlab='',ylab='')
+par(mai=c(0.7, 0.7, 0.4, 0))
+plot(iris$Sepal.Width,iris$Petal.Length)
+plot(iris$Petal.Width,iris$Petal.Length,ylab='')
+```
+
+

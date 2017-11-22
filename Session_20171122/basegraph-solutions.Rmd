@@ -1,0 +1,115 @@
+---
+title: "basegraph-solutions"
+output: html_document
+---
+
+```{r}
+library(car)
+library(dplyr)
+library(tidyr)
+library(tibble)
+```
+
+## R Base Graphics: Exercises
+
+#Create plots using data set "Salaries" from "car" package
+
+#1. Plot the salary as a function of the number of years since obtaining a PhD
+  - Group per sex (males: black, females:red) 
+  - Add x-axis title: "Years since PhD"
+  - Add y-axis title: "Salary"
+  - Add main title: "Salaries for professors"
+  - Add legend in top-left corner: "Female", "Male" 
+  - Add a black trendline for males, a red trendline for females
+  
+```{r}
+males <- Salaries %>% filter(sex=="Male")
+females <- Salaries %>% filter(sex=="Female")
+scatterplot <- plot(males$yrs.since.phd,males$salary,col="black",xlab="Years since Phd",ylab="Salary",main="Salaries for professors")
+points(females$yrs.since.phd,females$salary,col="red")
+legend("topleft",levels(Salaries$sex),col=c("red","black"),pch=1)
+abline(lm(males$salary~males$yrs.since.phd),col="black")
+abline(lm(females$salary~females$yrs.since.phd),col="red")
+```
+  
+Alternative:
+```{r}
+palette(c("red","black"))
+scatterplot <-plot(Salaries$yrs.since.phd,Salaries$salary,col=Salaries$sex,xlab="Years since Phd",ylab="Salary",main="Salaries for professors")
+legend("topleft",levels(Salaries$sex),col=c("red","black"),pch=1)
+abline(lm(Salaries[Salaries$sex=="Male",]$salary~Salaries[Salaries$sex=="Male",]$yrs.since.phd),col="black")
+abline(lm(Salaries[Salaries$sex=="Female",]$salary~Salaries[Salaries$sex=="Female",]$yrs.since.phd),col="red")
+```
+
+#2. Make a grouped bar plot with salaries as a function of rank, for males and females:
+
+- Groups: males (black), females (red)
+- Set ylim = c(0,180000)
+- Add x-axis title: "Rank"
+- Add y-axis title: "Salary"
+- Add legend in top-left corner
+- Add standard deviations as arrows
+- Add box
+
+```{r}
+ranksex <- Salaries %>% group_by(rank,sex) %>% summarise_all(funs(mean,sd))
+rankmeans <- ranksex %>% select(rank,sex,salary_mean) %>% spread(rank,salary_mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+ranksd <- ranksex %>% select(rank,sex,salary_sd) %>% spread(rank,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+rankplot <- barplot(rankmeans,names=colnames(rankmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Rank",ylab="Salary")
+legend("topleft",rownames(rankmeans),fill=c("red","black"))
+arrows(rankplot[1,],rankmeans[1,],rankplot[1,],rankmeans[1,]+ranksd[1,],code=2,angle=90,length=0.05)
+arrows(rankplot[2,],rankmeans[2,],rankplot[2,],rankmeans[2,]+ranksd[2,],code=2,angle=90,length=0.05)
+box(bty="o")
+```
+
+#3. Make a grouped bar plot with salaries as a function of discipline, for males and females (analogous to previous exercise):
+- Groups: males (black), females (red)
+- Set ylim = c(0,180000)
+- Add x-axis title: "Discipline"
+- Add y-axis title: "Salary"
+- No legend is needed this time
+- Add standard deviations as arrows
+- Add box
+
+```{r}
+discsex <- Salaries %>% group_by(discipline,sex) %>% summarise_all(funs(mean,sd))
+discmeans <- discsex %>% select(discipline,sex,salary_mean) %>% spread(discipline,salary_mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+discsd <- discsex %>% select(discipline,sex,salary_sd) %>% spread(discipline,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+discplot <- barplot(discmeans,names=colnames(discmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Discipline",ylab="Salary")
+arrows(discplot[1,],discmeans[1,],discplot[1,],discmeans[1,]+discsd[1,],code=2,angle=90,length=0.05)
+arrows(discplot[2,],discmeans[2,],discplot[2,],discmeans[2,]+discsd[2,],code=2,angle=90,length=0.05)
+box(bty="o")
+```
+
+#4. Combine the three previous plots into a multipanel plot with two rows, with the scatter plot spanning across the full width of the first row. Place the two bar plots in the second row next to each other.
+- Set margins for the scatterplot: par(mai=c(0.5,0.5,0.2,0.5))
+- Set margins for both other plots: par(mai=c(0.5,0.5,0,0.5))
+
+```{r}
+layout(matrix(c(1,1,2,3),2,2,byrow=TRUE))
+
+par(mai=c(0.7,0.7,0.3,0.5))
+
+#Add first plot:
+scatterplot <- plot(males$yrs.since.phd,males$salary,col="black",xlab="Years since Phd",ylab="Salary",main="Salaries for professors")
+points(females$yrs.since.phd,females$salary,col="red")
+legend("topleft",levels(Salaries$sex),col=c("red","black"),pch=1)
+abline(lm(males$salary~males$yrs.since.phd),col="black")
+abline(lm(females$salary~females$yrs.since.phd),col="red")
+
+par(mai=c(0.7,0.7,0.3,0.5))
+
+#Add second plot:
+rankplot <- barplot(rankmeans,names=colnames(rankmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Rank",ylab="Salary")
+legend("topleft",rownames(rankmeans),fill=c("red","black"))
+arrows(rankplot[1,],rankmeans[1,],rankplot[1,],rankmeans[1,]+ranksd[1,],code=2,angle=90,length=0.05)
+arrows(rankplot[2,],rankmeans[2,],rankplot[2,],rankmeans[2,]+ranksd[2,],code=2,angle=90,length=0.05)
+box(bty="o")
+
+#Add third plot:
+discplot <- barplot(discmeans,names=colnames(discmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Discipline",ylab="Salary")
+arrows(discplot[1,],discmeans[1,],discplot[1,],discmeans[1,]+discsd[1,],code=2,angle=90,length=0.05)
+arrows(discplot[2,],discmeans[2,],discplot[2,],discmeans[2,]+discsd[2,],code=2,angle=90,length=0.05)
+box(bty="o")
+```
+

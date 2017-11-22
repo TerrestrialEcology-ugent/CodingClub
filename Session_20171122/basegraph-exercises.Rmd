@@ -1,0 +1,76 @@
+---
+title: "basegraph-exercises"
+output: html_document
+---
+
+```{r}
+library(car)
+library(dplyr)
+library(tidyr)
+library(tibble)
+```
+
+## R Base Graphics: Exercises
+
+#Create plots using data set "Salaries" from "car" package
+
+#1. Plot the salary as a function of the number of years since obtaining a PhD
+  - Group per sex (males: black, females:red) 
+  - Add x-axis title: "Years since PhD"
+  - Add y-axis title: "Salary"
+  - Add main title: "Salaries for professors"
+  - Add legend in top-left corner: "Female", "Male" 
+  - Add a black trendline for males, a red trendline for females
+  
+```{r}
+#One option is to first split the data into males and females (see below) and then use plotting functions.
+#You can also work on the raw data set and use indexing to subset as needed within the plotting functions.
+
+males <- Salaries %>% filter(sex=="Male")
+females <- Salaries %>% filter(sex=="Female")
+
+```
+  
+#2. Make a grouped bar plot with salaries as a function of rank, for males and females:
+
+- Groups: males (black), females (red)
+- Set ylim = c(0,180000)
+- Add x-axis title: "Rank"
+- Add y-axis title: "Salary"
+- Add legend in top-left corner
+- Add standard deviations as arrows
+- Add box
+
+```{r}
+#One option to get the data in the right format for the required plotting functions:
+ranksex <- Salaries %>% group_by(rank,sex) %>% summarise_all(funs(mean,sd))
+rankmeans <- ranksex %>% select(rank,sex,salary_mean) %>% spread(rank,salary_mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+ranksd <- ranksex %>% select(rank,sex,salary_sd) %>% spread(rank,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+
+```
+
+#3. Make a grouped bar plot with salaries as a function of discipline, for males and females (analogous to previous exercise):
+- Groups: males (black), females (red)
+- Set ylim = c(0,180000)
+- Add x-axis title: "Discipline"
+- Add y-axis title: "Salary"
+- No legend is needed this time
+- Add standard deviations as arrows
+- Add box
+
+```{r}
+#One option to get the data in the right format for the required plotting functions:
+discsex <- Salaries %>% group_by(discipline,sex) %>% summarise_all(funs(mean,sd))
+discmeans <- discsex %>% select(discipline,sex,salary_mean) %>% spread(discipline,salary_mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+discsd <- discsex %>% select(discipline,sex,salary_sd) %>% spread(discipline,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
+
+```
+
+#4. Combine the three previous plots into a multipanel plot with two rows, with the scatter plot spanning across the full width of the first row. Place the two bar plots in the second row next to each other.
+- Set margins for the scatterplot: par(mai=c(0.5,0.5,0.2,0.5))
+- Set margins for both other plots: par(mai=c(0.5,0.5,0,0.5))
+
+```{r}
+
+```
+
