@@ -87,7 +87,7 @@ box(bty="o")
 
 ```{r}
 layout(matrix(c(1,1,2,3),2,2,byrow=TRUE))
-
+#set the margins
 par(mai=c(0.7,0.7,0.3,0.5))
 
 #Add first plot:
@@ -97,7 +97,6 @@ legend("topleft",levels(Salaries$sex),col=c("red","black"),pch=1)
 abline(lm(males$salary~males$yrs.since.phd),col="black")
 abline(lm(females$salary~females$yrs.since.phd),col="red")
 
-par(mai=c(0.7,0.7,0.3,0.5))
 
 #Add second plot:
 rankplot <- barplot(rankmeans,names=colnames(rankmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Rank",ylab="Salary")
