@@ -67,8 +67,8 @@ discsd <- discsex %>% select(discipline,sex,salary_sd) %>% spread(discipline,sal
 ```
 
 #4. Combine the three previous plots into a multipanel plot with two rows, with the scatter plot spanning across the full width of the first row. Place the two bar plots in the second row next to each other.
-- Set margins for the scatterplot: par(mai=c(0.5,0.5,0.2,0.5))
-- Set margins for both other plots: par(mai=c(0.5,0.5,0,0.5))
+- Set margins for all plots: par(mai=c(0.7,0.7,0.3,0.5))
+
 
 ```{r}
 
