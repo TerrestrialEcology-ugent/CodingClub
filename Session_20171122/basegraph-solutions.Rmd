@@ -87,7 +87,7 @@ box(bty="o")
 
 ```{r}
 layout(matrix(c(1,1,2,3),2,2,byrow=TRUE))
-
+#set the margins
 par(mai=c(0.7,0.7,0.3,0.5))
 
 #Add first plot:
