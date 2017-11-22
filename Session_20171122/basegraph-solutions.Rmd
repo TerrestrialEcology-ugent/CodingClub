@@ -96,8 +96,7 @@ points(females$yrs.since.phd,females$salary,col="red")
 legend("topleft",levels(Salaries$sex),col=c("red","black"),pch=1)
 abline(lm(males$salary~males$yrs.since.phd),col="black")
 abline(lm(females$salary~females$yrs.since.phd),col="red")
-
-par(mai=c(0.7,0.7,0.3,0.5))
+mtext(text = "A",side = 3,outer = FALSE,line = 0,adj = 0)
 
 #Add second plot:
 rankplot <- barplot(rankmeans,names=colnames(rankmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Rank",ylab="Salary")
@@ -105,11 +104,14 @@ legend("topleft",rownames(rankmeans),fill=c("red","black"))
 arrows(rankplot[1,],rankmeans[1,],rankplot[1,],rankmeans[1,]+ranksd[1,],code=2,angle=90,length=0.05)
 arrows(rankplot[2,],rankmeans[2,],rankplot[2,],rankmeans[2,]+ranksd[2,],code=2,angle=90,length=0.05)
 box(bty="o")
+mtext(text = "B",side = 3,outer = FALSE,line = 0,adj = 0)
+
 
 #Add third plot:
 discplot <- barplot(discmeans,names=colnames(discmeans),beside=T,col=c("red","black"),ylim=(c(0,180000)),xlab="Discipline",ylab="Salary")
 arrows(discplot[1,],discmeans[1,],discplot[1,],discmeans[1,]+discsd[1,],code=2,angle=90,length=0.05)
 arrows(discplot[2,],discmeans[2,],discplot[2,],discmeans[2,]+discsd[2,],code=2,angle=90,length=0.05)
 box(bty="o")
+mtext(text = "C",side = 3,outer = FALSE,line = 0,adj = 0)
 ```
 
