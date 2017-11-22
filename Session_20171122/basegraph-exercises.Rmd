@@ -29,16 +29,6 @@ head(Salaries)
 males <- Salaries %>% filter(sex=="Male")
 females <- Salaries %>% filter(sex=="Female")
 
-m_male <- lm(salary~yrs.service,Salaries,subset=sex=="Male")
-m_female <- lm(salary~yrs.service,Salaries,subset=sex=="Female")
-
-
-plot(salary~yrs.service,Salaries,col=c("red","black")[Salaries$sex],
-     xlab="Years since Phd",ylab="Salary",main="Salaries for professors",pch=16)
-abline(m_male)
-abline(m_female,col="red")
-legend("topleft",legend=c("Male","Female"),col=c("black","red"),pch=16,bty="n")
-
 ```
   
 #2. Make a grouped bar plot with salaries as a function of rank, for males and females:
@@ -56,13 +46,6 @@ legend("topleft",legend=c("Male","Female"),col=c("black","red"),pch=16,bty="n")
 ranksex <- Salaries %>% select(salary,rank,sex) %>% group_by(rank,sex) %>% summarise_all(funs(mean,sd))
 rankmeans <- ranksex %>% select(rank,sex,mean) %>% spread(rank,mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
 ranksd <- ranksex %>% select(rank,sex,salary_sd) %>% spread(rank,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
-
-bp1 <- barplot(rankmeans,names=ranksex$rank,beside=TRUE,col=rep(c("red","black"),3),ylim=c(0,180000),
-        xlab="Rank",ylab="Salary")
-legend("topleft",legend=c("male","female"),fill=c("black","red"),bty="n")
-arrows(bp1,ranksex$mean,bp1,ranksex$mean + ranksex$sd,angle=90)
-box()
-p_1 <- recordPlot()
 ```
 
 #3. Make a grouped bar plot with salaries as a function of discipline, for males and females (analogous to previous exercise):
@@ -79,11 +62,6 @@ p_1 <- recordPlot()
 discsex <- Salaries %>% group_by(discipline,sex) %>% summarise_all(funs(mean,sd))
 discmeans <- discsex %>% select(discipline,sex,salary_mean) %>% spread(discipline,salary_mean) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
 discsd <- discsex %>% select(discipline,sex,salary_sd) %>% spread(discipline,salary_sd) %>% remove_rownames %>% column_to_rownames("sex") %>% as.matrix
-
-bp1 <- barplot(discmeans,beside=TRUE,col=rep(c("red","black"),3),xlab="Discipline",ylab="Salary",ylim=c(0,180000))
-arrows(bp1,discmeans,bp1,discmeans + discsd,angle=90)
-box()
-p_2 <- recordPlot()
 ```
 
 #4. Combine the three previous plots into a multipanel plot with two rows, with the scatter plot spanning across the full width of the first row. Place the two bar plots in the second row next to each other.
@@ -91,23 +69,6 @@ p_2 <- recordPlot()
 
 
 ```{r}
-layout(matrix(c(1,1,2,3),byrow = TRUE,ncol=2))
-par(mai=c(0.7,0.5,0.2,0.5))
-plot(salary~yrs.service,Salaries,col=c("red","black")[Salaries$sex],
-     xlab="Years since Phd",ylab="Salary",main="Salaries for professors",pch=16)
-abline(m_male)
-abline(m_female,col="red")
-legend("topleft",legend=c("Male","Female"),col=c("black","red"),pch=16,bty="n")
 
-par(mai=c(0.5,0.5,0,0.5))
-bp1 <- barplot(rankmeans,names=ranksex$rank,beside=TRUE,col=rep(c("red","black"),3),ylim=c(0,180000),
-        xlab="Rank",ylab="Salary")
-legend("topleft",legend=c("male","female"),fill=c("black","red"),bty="n")
-arrows(bp1,ranksex$mean,bp1,ranksex$mean + ranksex$sd,angle=90)
-box()
-
-bp1 <- barplot(discmeans,beside=TRUE,col=rep(c("red","black"),3),xlab="Discipline",ylab="Salary",ylim=c(0,180000))
-arrows(bp1,discmeans,bp1,discmeans + discsd,angle=90)
-box()
 ```
 

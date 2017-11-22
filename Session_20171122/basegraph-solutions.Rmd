@@ -115,3 +115,49 @@ box(bty="o")
 mtext(text = "C",side = 3,outer = FALSE,line = 0,adj = 0)
 ```
 
+Lionel's solution
+
+```{r}
+# Exercise 1
+m_male <- lm(salary~yrs.service,Salaries,subset=sex=="Male")
+m_female <- lm(salary~yrs.service,Salaries,subset=sex=="Female")
+
+
+plot(salary~yrs.service,Salaries,col=c("red","black")[Salaries$sex],
+     xlab="Years since Phd",ylab="Salary",main="Salaries for professors",pch=16)
+abline(m_male)
+abline(m_female,col="red")
+legend("topleft",legend=c("Male","Female"),col=c("black","red"),pch=16,bty="n")
+
+#Exercise 2
+bp1 <- barplot(rankmeans,names=ranksex$rank,beside=TRUE,col=rep(c("red","black"),3),ylim=c(0,180000),
+        xlab="Rank",ylab="Salary")
+legend("topleft",legend=c("male","female"),fill=c("black","red"),bty="n")
+arrows(bp1,ranksex$mean,bp1,ranksex$mean + ranksex$sd,angle=90)
+box()
+
+#Exercise 3
+bp1 <- barplot(discmeans,beside=TRUE,col=rep(c("red","black"),3),xlab="Discipline",ylab="Salary",ylim=c(0,180000))
+arrows(bp1,discmeans,bp1,discmeans + discsd,angle=90)
+box()
+
+#Exercise 4
+layout(matrix(c(1,1,2,3),byrow = TRUE,ncol=2))
+par(mai=c(0.7,0.5,0.2,0.5))
+plot(salary~yrs.service,Salaries,col=c("red","black")[Salaries$sex],
+     xlab="Years since Phd",ylab="Salary",main="Salaries for professors",pch=16)
+abline(m_male)
+abline(m_female,col="red")
+legend("topleft",legend=c("Male","Female"),col=c("black","red"),pch=16,bty="n")
+
+par(mai=c(0.5,0.5,0,0.5))
+bp1 <- barplot(rankmeans,names=ranksex$rank,beside=TRUE,col=rep(c("red","black"),3),ylim=c(0,180000),
+        xlab="Rank",ylab="Salary")
+legend("topleft",legend=c("male","female"),fill=c("black","red"),bty="n")
+arrows(bp1,ranksex$mean,bp1,ranksex$mean + ranksex$sd,angle=90)
+box()
+
+bp1 <- barplot(discmeans,beside=TRUE,col=rep(c("red","black"),3),xlab="Discipline",ylab="Salary",ylim=c(0,180000))
+arrows(bp1,discmeans,bp1,discmeans + discsd,angle=90)
+box()
+```
