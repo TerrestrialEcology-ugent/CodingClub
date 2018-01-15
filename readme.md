@@ -10,7 +10,8 @@ In this repo you will find notes from the coding club meetings of the UGent form
 * Session_20170803: introduction to for loops, if/else and function in R
 * Session_20170922: introduction to apply, lapply, sapply, and plyr
 * Session_20171019: introduction to dplyr and tidyr
-* Session_20171122: using plot and ggplot in R
+* Session_20171122: using plot in R
+* Session_20180116: basics and tipps for using ggplot in R
 
 # How to use
 
