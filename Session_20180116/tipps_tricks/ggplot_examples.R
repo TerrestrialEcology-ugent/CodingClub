@@ -102,7 +102,9 @@ grid_arrange_shared_legend <- function(..., nrow = 1, ncol = length(list(...)), 
   
 }
 
+#add italic titles, from Stefano
 
+ggtitle(expression(atop("TITLE", atop(italic("subtitle")))))
 
 
 
