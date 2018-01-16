@@ -1,0 +1,62 @@
+---
+title: "ggplot-excersises"
+output: html_document
+---
+
+```{r}
+library(car)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## R ggplot2 Graphics: Exercises
+
+#Create plots using data set "Salaries" from "car" package
+
+#1. Plot the salary as a function of the number of years since obtaining a PhD
+  - Group per sex (males: black, females:red) 
+  - Add x-axis title: "Years since PhD"
+  - Add y-axis title: "Salary"
+  - Add main title: "Salaries for professors"
+  - Add legend above the graph 
+  
+```{r}
+
+```
+  
+
+#2. Make a boxplot with salaries as are shown for the different sexes per rank
+
+
+```{r}
+
+```
+
+
+
+#3. Make the same graph as in #2, change theme
+- Change line colours of the boxes
+- Change the fill colours of the boxes
+- Make the y-axis title bold
+- Remove the x-axis tile
+
+```{r}
+
+```
+
+#4. Combine the three previous plots into a multipanel plot, with the 3 graphs next to each other
+- add a general title
+
+```{r}
+library(gridExtra)
+
+```
+
+
+
+
+#5. Make the first graph using qplot
+```{r}
+
+```

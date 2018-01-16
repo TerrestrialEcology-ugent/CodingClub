@@ -2,6 +2,31 @@
 
 library(ggplot2)
 library(dplyr)
+library(rvest)
+library(tidyr)
+
+#dll the data
+aqua <- read_html("http://aquatext.com/tables/algaegrwth.htm")
+
+aqua %>%
+  html_node(xpath="/html/body/table[2]") %>%
+  html_table(fill=TRUE) -> tmp
+
+
+tmp <- tmp[-3,]
+tmp[13,4] <- 0.06
+nn <- tmp$X1
+nn<-gsub("(\\s{1})\\s*","_",nn)
+nn[2]<-"Light_Intensity"
+
+dat <- matrix(as.numeric(t(tmp[,-1])),ncol=21,byrow=FALSE)
+colnames(dat) <- nn
+dat <- as.data.frame(dat)
+
+dat %>%
+  gather(Species,Division,-Temperature,-Light_Intensity) -> dat
+
+write.table(dat,"Challenge_data.csv",sep=",",row.names=FALSE)
 
 head(iris)
 

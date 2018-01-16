@@ -1,0 +1,107 @@
+---
+title: "ggplot-solutions"
+output: html_document
+---
+
+```{r}
+library(car)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## R ggplot2 Graphics: Exercises
+
+#Create plots using data set "Salaries" from "car" package
+
+#1. Plot the salary as a function of the number of years since obtaining a PhD
+  - Group per sex (males: black, females:red) 
+  - Add x-axis title: "Years since PhD"
+  - Add y-axis title: "Salary"
+  - Add main title: "Salaries for professors"
+  - Add legend above the graph 
+  
+```{r}
+ggplot(Salaries,aes(x=yrs.since.phd,y=salary,colour=sex)) +
+  geom_point() +
+  labs(title="Salaries for professors",x="Years since PhD",y="Salary") +
+  theme(legend.position="top")
+```
+  
+
+#2. Make a boxplot with salaries as are shown for the different sexes per rank
+
+
+```{r}
+ggplot(Salaries,aes(x=rank,y=salary,colour=sex)) +
+  geom_boxplot() +
+  labs(title="Salaries for professors",x="Rank",y="Salary")
+```
+
+Alternative
+```{r}
+ggplot(Salaries,aes(x=sex,y=salary,colour=sex)) +
+  geom_boxplot() +
+  labs(title="Salaries for professors", x="Sex",y="Salary") +
+  facet_grid(.~rank) + 
+  theme(legend.position="none")
+```
+
+
+#3. Make the same graph as in #2, change theme
+- Change line colours of the boxes
+- Change the fill colours of the boxes
+- Make the y-axis title bold
+- Remove the x-axis tile
+
+```{r}
+ggplot(Salaries,aes(x=sex,y=salary,fill=sex)) +
+  geom_boxplot() +
+  labs(title="Salaries for professors", x="Sex",y="Salary") +
+  facet_grid(.~rank) + 
+  theme(legend.position="none",
+        axis.title.y = element_text(face="bold"),
+        axis.title.x = element_blank())
+```
+
+#4. Combine the three previous plots into a multipanel plot, with the 3 graphs next to each other
+- add a general title
+```{r}
+library(gridExtra)
+
+one = ggplot(Salaries,aes(x=yrs.since.phd,y=salary,colour=sex)) +
+  geom_point() +
+  labs(x="Years since PhD",y="Salary") +
+  theme(legend.position="top")
+
+two = ggplot(Salaries,aes(x=sex,y=salary,colour=sex)) +
+  geom_boxplot() +
+  labs(x="Sex",y="Salary") +
+  facet_grid(.~rank) + 
+  theme(legend.position="none")
+
+three = ggplot(Salaries,aes(x=sex,y=salary,fill=sex)) +
+  geom_boxplot() +
+  labs(x="Sex",y="Salary") +
+  facet_grid(.~rank) + 
+  theme(legend.position="none",
+        axis.title.y = element_text(face="bold"),
+        axis.title.x = element_blank())
+
+grid.arrange(one, two, three,
+             ncol=3,
+             top="Salaries for professors")
+
+
+```
+
+
+
+
+#5. Make the first graph using qplot
+```{r}
+qplot(Salaries,aes(x=yrs.since.phd,y=salary,colour=sex)) +
+  geom_point() +
+  labs(title="Salaries for professors",x="Years since PhD",y="Salary") +
+  theme(legend.position="top")
+```
