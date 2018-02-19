@@ -101,3 +101,10 @@ g_out <- grid.arrange(g1,g2,nrow=2)
 ggsave(filename = "ggplot_output.eps",plot = g_out)
 
 #website to check: http://www.ggplot2-exts.org/
+
+
+bird %>%
+  arrange(Repetition) %>%
+  select(-Day) %>%
+  rename(Day=Plot.cluster) -> bird
+
