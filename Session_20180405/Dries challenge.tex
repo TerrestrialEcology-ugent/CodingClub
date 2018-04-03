@@ -1,0 +1,85 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+ 	\usetheme{Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
+	\usecolortheme{beaver} % or try albatross, beaver, crane, ...
+	%\usefonttheme{serif}  % or try serif, structurebold, ...
+	%\setbeamertemplate{navigation symbols}{}
+	%\setbeamertemplate{caption}[numbered]
+} 
+\setbeamertemplate{caption}[numbered]{}
+
+\usepackage[english]{babel}
+\titlegraphic{\vspace*{-2cm}\includegraphics[height=0.6\textheight]{cartoon.jpg}}
+\title{Dries' \LaTeX{} challenge}
+\subtitle{Coding club 05-04-2018}
+
+\date{}
+
+\usepackage{caption}
+%\captionsetup[figure]{labelformat=empty}
+
+\usepackage[export]{adjustbox}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage[utf8]{inputenc}
+\usepackage{fontenc}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Dries' challenge}
+Dries was inspired by a very nicely lay-outed doctoral thesis. See today`s directory `PHD Brouwer 2007'.\\
+If you finished an exercise or if they bore you (because the basics of \LaTeX{} don't have much secrets for you anymore), try to find out if some of these layout items can be copied in \LaTeX{}! 
+\end{frame}
+
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\section{Chapter titlepage}
+\begin{frame}{1. Chapter titlepage}
+We have added a titlepage to our document. Find out if they can be added to chapters as well (probably only in document class `book'?).\\
+Example `PHD Brouwer 2007' p. 17
+\end{frame}
+
+\section{Header \& numbering of your page}
+\begin{frame}{2. Header \& numbering of your page}
+\begin{enumerate}
+\item How to add \textbf{headers} to your pages with the line, `chapter...' on your left page (even numbered) and title of that chapter on your right page (odd numbered)?
+\item How to add \textbf{page-numbers} on your pages (also following the left-right page). How to make \LaTeX{} ignoring this on particular pages (that he keeps counting but leaves the number out on title pages, pages with a lot of pictures...).
+\end{enumerate}
+\end{frame}
+
+\section{Picture spread over two pages}
+\begin{frame}{3. Picture spread over two pages}
+Can this easily be done in \LaTeX{}? See page 6
+\end{frame}
+
+\section{Pictures ordered on page without the margins}
+\begin{frame}{4. Pictures ordered on page without the margins}
+How can you easily spread pictures and make \LaTeX{} ignore margins for your figures?\\
+See page 16
+\end{frame}
+
+\section{References}
+\begin{frame}{5. References}
+Not in the example thesis, but would be nice to know!
+\begin{enumerate}
+	\item We have seen how to put references at the end of your document. Can they also be put between chapters, with the references used in that chapter?
+	\item Can you add letters A, B, C... in your list of references (to easily guide the eye where to find alphabetically ordered references)? This is used a lot in books with references spread over many pages.
+\end{enumerate}
+\end{frame}
+
+\end{document}
+ 
