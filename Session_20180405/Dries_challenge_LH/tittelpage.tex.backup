@@ -1,0 +1,86 @@
+%  Titelblad
+
+% Opmerking: gaat uit van een \baselinestretch waarde van 1.5 (die moet
+% ingesteld worden voor het begin van de document environment)
+
+\begin{titlepage}
+
+%\setlength{\hoffset}{-1in}
+%\setlength{\voffset}{-1in}
+%\setlength{\topmargin}{1.5cm}
+%\setlength{\headheight}{0.5cm}
+%\setlength{\headsep}{1cm}
+%\setlength{\oddsidemargin}{3cm}
+%\setlength{\evensidemargin}{3cm}
+%\setlength{\footskip}{1.5cm}
+%\enlargethispage{1cm}
+% \textwidth en \textheight hier aanpassen blijkt niet te werken
+
+\fontsize{12pt}{14pt}
+\selectfont
+
+\begin{center}
+
+
+\textsc{Gent Universiteit}
+
+\vspace*{1cm}
+
+\Large{\bf Title of the thesis}
+
+\vspace*{1cm}
+
+\textsc{Proefschrift}
+
+\vspace*{1cm}
+
+
+
+
+
+\vspace{0.5cm}
+
+Faculteit Ingenieurswetenschappen\\
+Vakgroep Informatietechnologie\\
+Voorzitter: Prof.~Dr.~Ir.~P.~\textsc{Lagasse}
+
+\vspace{2.0cm}
+
+\fontseries{bx}
+\fontsize{17.28pt}{21pt}
+\selectfont
+
+\textsc{Breedbandtoegangsnetwerk voor treinen\\
+ door middel van Radio-over-Fiber}
+
+\fontseries{m}
+\fontsize{12pt}{14pt}
+\selectfont
+
+\vspace{.6cm}
+
+door 
+
+\vspace{.4cm}
+
+Peter \textsc{Dedecker}
+
+\vspace{2.5cm}
+
+Promotoren: Prof.~Dr.~Ir.~I.~\textsc{Moerman}, Dr.~Ir.~D.~\textsc{Colle}\\
+Scriptiebegeleiders: Ir.~B.~\textsc{Lannoo}, Lic.~B.~\textsc{Jooris}, Ir.~T.~\textsc{Van~Leeuwen}\\
+
+\vspace{1.5cm}
+
+Scriptie ingediend tot het behalen van de academische graad van\\
+\textsc{Burgerlijk Ingenieur in de Computerwetenschappen\\
+optie Informatie- en Communicatietechnologie}
+
+\vspace{0.75cm}
+
+Academiejaar 2005--2006
+
+\end{center}
+\end{titlepage}
+
+\thispagestyle{empty}

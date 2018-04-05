@@ -1,0 +1,9 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}General introduction}{3}
+\contentsline {chapter}{\numberline {2}Title of paper 1}{5}
+\TocHeadingBoxA 
+\contentsline {chapter}{\numberline {3}Summary and discussion}{9}
+\contentsline {chapter}{References}{11}
+\contentsline {chapter}{List of Figures}{13}
+\contentsline {chapter}{List of Tables}{15}
+\contentsfinish 

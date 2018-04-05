@@ -1,0 +1,200 @@
+\documentclass[12pt,a4paper,oneside]{book}
+\usepackage{a4wide}                     % Iets meer tekst op een bladzijde
+\usepackage[dutch,english]{babel}       % Voor nederlandstalige hyphenatie (woordsplitsing)
+\usepackage{amsmath}                    % Uitgebreide wiskundige mogelijkheden
+\usepackage{amssymb}                    % Voor speciale symbolen zoals de verzameling Z, R...
+\usepackage{url}                        % Om url's te verwerken
+\usepackage{graphicx}                   % Om figuren te kunnen verwerken
+\usepackage[small,bf,hang]{caption}    % Om de captions wat te verbeteren
+\usepackage{xspace}                     % Magische spaties na een commando
+\usepackage[latin1]{inputenc}           % Om niet ascii karakters rechtstreeks te kunnen typen
+\usepackage{float}                      % Om nieuwe float environments aan te maken. Ook optie H!
+\usepackage{flafter}                    % Opdat floats niet zouden voorsteken
+\usepackage{listings}                   % Voor het weergeven van letterlijke text en codelistings
+\usepackage{marvosym}                   % Om het euro symbool te krijgen
+\usepackage{textcomp}                   % Voor onder andere graden celsius
+\usepackage{fancyhdr}                   % Voor fancy headers en footers.
+\usepackage{graphics}			% Om figuren te verwerken.
+\usepackage[nottoc]{tocbibind} % Bibliografie in ToC; zie tocbibind.dvi
+%\usepackage{pstricks}
+\usepackage{longtable}
+\usepackage{pdfpages}  % pdf pagina's importeren
+%\usepackage[plainpages=false]{hyperref}    % Om hyperlinks te hebben in het pdfdocument.
+\usepackage[dutch]{babel} %for dutch-like character
+\usepackage{titletoc}%
+
+%settings for the table of contents
+\titlecontents{chapter}% <section-type>
+  [0pt]% <left>
+  {\bfseries}% <above-code>
+  {\chaptername\ \thecontentslabel:\quad}% <numbered-entry-format>
+  {}% <numberless-entry-format>
+  {\hfill\contentspage}% <filler-page-format>
+
+\newcommand{\npar}{\par \vspace{2.3ex plus 0.3ex minus 0.3ex} \noindent}	% Om witruimte te krijgen tussen paragrafen
+\graphicspath{{figures/}}               % De plaats waar latex zijn figuren gaat halen.
+
+
+\newcommand{\command}[1]{\lstinline[basicstyle=\tt]{#1}\xspace} %Voor commando's
+\hyphenation{he-den-daag-se ap-pa-ra-tuur Meet-re-sul-ta-ten hand-o-ver-tijd ho-ge-snel-heids-trein}
+
+
+%setting toc entries for the box
+\newcommand*\TocHeadingBoxA
+{\noindent\parbox[t]{\textwidth}{\bf \Large{Box A: \hspace*{1.35cm} Title of Box A \hfill \pageref{boxa-pagenb}}}\par
+ \global\let\TocHeadingBoxA\empty }
+
+
+
+% Het bibliografisch opmaak bestand.
+\bibliographystyle{unsrt}
+%\bibliographystyle{bibliodutch}
+%\bibpunct{[}{]}{,}{n}{,}{,}
+
+\renewcommand{\chaptermark}[1]{\markright{\MakeUppercase{#1}}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection~#1}}
+
+\newcommand{\headerfmt}[1]{\textsl{\textsf{#1}}}
+\newcommand{\headerfmtpage}[1]{\textsf{#1}}
+
+%\lhead[\thechapter]{}
+%\rhead[]{\chaptername \thechapter}
+
+
+%\fancyhead[L,RO]{\headerfmtpage{\thepage}}
+%\fancyhead[LO]{\headerfmt{\rightmark}}
+%\fancyhead[R]{\headerfmt{\leftmark}}
+%\renewcommand{\headrulewidth}{0.5pt}
+%\renewcommand{\footrulewidth}{0pt}
+
+%\fancypagestyle{plain}{ % eerste bladzijde van een hoofdstuk
+%  \fancyhf{}
+%  \fancyhead[L,RO]{\headerfmtpage{\thepage}}
+%  \fancyhead[LO]{\headerfmt{\rightmark}}
+%  \fancyhead[R]{\headerfmt{\leftmark}}
+%  \renewcommand{\headrulewidth}{0.5pt}
+%  \renewcommand{\footrulewidth}{0pt}
+%}
+
+\renewcommand{\lstlistoflistings}{\begingroup
+   \tocfile{\lstlistlistingname}{lol}
+\endgroup}
+
+
+% anderhalve interlinie (opm: titelblad gaat uit van 1.5)
+\renewcommand{\baselinestretch}{1.5}
+
+
+%\hypersetup{
+%    pdfauthor = {DVL},
+%    pdftitle = {Cooperative breeding},
+%    pdfsubject = {PhD from DVL}
+%}
+
+\begin{document}
+\nocite{*}
+%\selectlanguage{dutch}
+\renewcommand\lstlistlistingname{Lijst van codefragmenten}
+\renewcommand\lstlistingname{Codefragment}
+
+\pagenumbering{gobble} %to remove page numbering
+\input{frontmatter}
+
+\pagestyle{empty}
+
+
+%\input{s-titel}
+
+% lege pagina (!!)
+%\newpage
+%\vfil\null
+%\newpage
+
+
+% titelblad (!!)
+\input{tittelpage}
+
+% geen paginanummering tot we aan de inhoudsopgave komen
+\pagenumbering{roman}
+\frontmatter
+\tableofcontents
+
+\pagenumbering{arabic}
+\mainmatter
+\pagestyle{fancy}
+
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\chaptername\ \thechapter.\ #1}}{}}
+\fancyhf{}
+\fancyhead[L]{\chaptername \thechapter}
+\fancyhead[R]{\chaptermark}
+
+\include{introduction}
+
+\chapter{Title of Paper 1}
+\include{paper1}
+
+
+
+\addtocontents{toc}{\protect\TocHeadingBoxA}
+\label{boxa-pagenb}
+\chapter*{Title of Box A}
+%repeat the title down there 
+
+
+\include{boxa}
+
+
+\chapter{Summary and general discussion}
+
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
+
+% voorwoord met dankwoord en toelating tot bruikleen (ondertekend)
+%\input{s-voorwoord}
+
+% overzicht
+%\include{s-overzicht}
+
+% abstract
+%\addcontentsline{toc}{chapter}{Extended abstract}
+%\includepdf[pages=-]{../abstract/abstract.pdf}
+
+\pagestyle{fancy}
+%\renewcommand{\baselinestretch}{1.08} 	% De interlinie afstand wat verkleinen.
+%\small\normalsize                       % Nodig om de baselinestretch goed te krijgen.
+%\addcontentsline{toc}{chapter}{Inhoudsopgave}
+%\tableofcontents
+%\renewcommand{\baselinestretch}{1.2} 	% De interlinie afstand wat vergroten.
+%\small\normalsize                       % Nodig om de baselinestretch goed te krijgen.
+%\input{s-afkortingen}
+
+
+%\input{s-inleiding}
+%\input{s-werking}
+%\input{s-simulatiemodel}
+%\chapter{Implementatie van het simulatiemodel}
+%\input{s-nsclick}
+%\input{s-uitwerking}
+%\input{s-resultaten}
+%\input{s-besluit}
+
+\appendix
+%\input{s-sourcecode}
+%\input{s-details}
+
+% De bibliografie en de index
+%\bibliography{bibliodatabase}
+
+\backmatter
+\listoffigures
+\listoftables
+%\addcontentsline{toc}{chapter}{Lijst van codefragmenten}
+%\lstlistoflistings
+
+% lege pagina (!!)
+
+% kaft
+
+
+
+\end{document}
