@@ -9,5 +9,6 @@ There is one skeletton file setting all the format: scriptie.tex, the chapters o
 ## What is left out
 
 * proper headers for the Box chapters
+* shutting 
 * reference inclusion, reference can be included once at the end of the thesis in the scriptie file or for each chapters adding \bibliography commands within the individual chapter files
 * ...

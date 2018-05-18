@@ -1,0 +1,65 @@
+---
+title: "Simulation coding club"
+author: "Lionel Hertzog"
+date: "May 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Simulation B, A, BA
+
+Simulation as we under
+
+The r* functions
+
+Simple examples with rbinom or rnorm (sex of offsprings or height), show uncertainties in simulation process, importance of replications
+
+Some technicalities about simulation in R, looping, vectorization, replicate
+
+### Exercice
+
+
+## Using simulations for testing model fitness
+
+Based on blog posts and DHARMa
+
+### Exercice
+
+## Using simulations for power analysis
+
+An easy and more tricky exmaple inspired from Bolker's book
+
+### Exercice
+
+```{r}
+n <- seq(10,100,10)
+pow_fun <- function(n){
+  x <- runif(n,-2,2)
+  y <- rpois(n,lambda=exp(0.5 + 0.25 * x))
+  m <- glm(y~x,family = "poisson")
+  return(summary(m)$coefficients[2,4])
+}
+n_rep <- 100
+pow_slp <- sapply(n,function(n) sum(replicate(n_rep,pow_fun(n)) < 0.05) / n_rep)
+{plot(n,pow_slp,type="l")
+abline(h=0.8,lty=2,lwd=2)}
+```
+
+## Using simulations to explore processes
+
+Some movement or other examples from the working group
+
+### Exercice
+
+
+
+
+
+
+
+
+
+
