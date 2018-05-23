@@ -3,6 +3,8 @@ simu_pres
 author: Lionel Hertzog
 date: 23.05.2018
 autosize: true
+width: 1920
+height: 1080
 
 Simulation: what is it?
 ========================================================
@@ -28,8 +30,8 @@ runif(n = 10, min = 0, max = 10)
 ```
 
 ```
- [1] 1.000673 1.865291 2.041160 8.758297 1.270327 5.044570 5.048206
- [8] 2.194853 5.158429 9.878023
+ [1] 0.3086941 5.8229545 7.5679119 1.8070141 0.9471185 6.4947998 7.0755857
+ [8] 2.6405264 5.9300886 5.5286127
 ```
 
 Generate **r**andom **norm**al values:
@@ -40,8 +42,8 @@ rnorm(n = 10, mean = 0, sd = 5)
 ```
 
 ```
- [1] -0.2372572  3.1006836  0.1074503  4.9644669 -2.1504254 -5.6309748
- [7] -0.6847110 10.4923676  0.5919222 -4.4162539
+ [1]   8.269181   4.996557  -1.629924  -2.823413   1.511992   7.846640
+ [7]   7.649506 -11.548628   4.302251   1.514293
 ```
 
 Generating stochasticity - the r* functions
@@ -55,7 +57,7 @@ rbinom(n = 10, size = 10, prob = 0.5)
 ```
 
 ```
- [1] 6 7 9 3 3 3 3 4 2 4
+ [1] 5 5 6 4 6 4 6 4 2 9
 ```
 
 Generate **r**andom **pois**son values:
@@ -66,7 +68,7 @@ rpois(n = 10, lambda = 5)
 ```
 
 ```
- [1] 3 6 3 4 3 8 3 3 4 6
+ [1] 7 4 2 9 5 3 5 3 8 5
 ```
 
 
@@ -92,7 +94,7 @@ sum(rbinom(n = 100, size = 1, prob = 0.488))
 ```
 
 ```
-[1] 52
+[1] 50
 ```
 
 Exercice
@@ -105,43 +107,6 @@ Your task:
 * Generate 50 simulated values
 * Plot an histogram for these values
 
-Solution I
-========================================================
-
-
-```r
-nb_sims <- 50
-nb_girls <- vector(length=nb_sims)
-for(i in 1:nb_sims){
-  nb_girls[i] <- rbinom(1,100,0.488)
-}
-hist(nb_girls)
-```
-
-![plot of chunk unnamed-chunk-7](simu_pres-figure/unnamed-chunk-7-1.png)
-
-Solution II
-=======================================================
-
-
-```r
-nb_sims <- 50
-nb_girls <- sapply(1:nb_sims, function(x) rbinom(1,100,0.488))
-hist(nb_girls)
-```
-
-![plot of chunk unnamed-chunk-8](simu_pres-figure/unnamed-chunk-8-1.png)
-
-Solution III
-======================================================
-
-
-```r
-nb_girls <- replicate(n = 50,expr = rbinom(1,100,0.488))
-hist(nb_girls)
-```
-
-![plot of chunk unnamed-chunk-9](simu_pres-figure/unnamed-chunk-9-1.png)
 
 Using simulations to test model fitness
 ====================================================
@@ -149,8 +114,8 @@ Using simulations to test model fitness
 * Every statistical models make some assumptions about the process that generated the data
 
 * We could use this idea for:
-   * A priori exploration of models via fake data simulations
-   * A posteriori checks that the model is OK
+   * A priori exploration of models via fake data simulations (power analysis)
+   * A posteriori checks that the model is OK (residual checks and parametric bootstrapped)
    
 Fake-data simulation - Exercice
 ===================================================
@@ -163,13 +128,16 @@ Simulate some fake data given:
 
 
 ```r
+n <- 30
 alpha <- 1
 beta <- 2
 sigma <- 1
-x <- 1:10
+x <- 1:n
 ```
 
-Then fit a **lm** to this data and check if the model worked good.
+* Then fit a **lm** to this data and check if the model worked good.
+* Try out different sample size, what happens?
+* Put this into a function
 
 Power analysis
 ===================================================
@@ -194,33 +162,48 @@ With x:
 x <- runif(10, -2, 2)
 ```
 
-And **n** being the sample size varying from 10 to 100 in steps of 10
+The sample size varying from 10 to 100 in steps of 10.
 
-Power analysis - Results
-=================================================
+Hint: Think function!
 
-![plot of chunk unnamed-chunk-12](simu_pres-figure/unnamed-chunk-12-1.png)
+Basic steps for fake-data simulation
+============================================
+
+* Write down the model
+* Give numeric values to all parameters in the models
+* Derive the model matrix (the explanatory variables)
+* Draw (many times) response values using one of the r* functions
 
 Simulation for checking model fit
 ===============================================
 
 The idea:
 
-* If your idea of the data-generating process (aka the model) is not too bad then:
-* data simulated based ont he model fit should not be too far from the real data
-* this can be used, for instance: residuals checks, checking some statistic of the data, over or underdispersion ...
+* If the model does a good job of capturing the data-generating process then:
+* data simulated based on the model fit should not be too far from the real data
+* this can be used to, for instance: residuals checks, checking some statistic of the data, over or underdispersion ...
 
 Simulation for checking model fit - Example I
 ===============================================
 
 
 ```r
-library(datasets)
-data("swiss")
-m <- lm(Fertility ~ Catholic + Education, swiss)
-swiss <- cbind(swiss, simulate(m, nsim = 9))
+data(iris)
+m <- lm(Sepal.Length ~ Sepal.Width, iris)
+qqnorm(resid(m))
+qqline(resid(m))
+```
+
+<img src="simu_pres-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="1000px" height="500px" />
+
+Simulation for checking model fit
+===============================================
+
+
+```r
+iris <- cbind(iris, simulate(m, nsim = 9))
 new_resid <- sapply(1:9,function(i){
-  m_n <- lm(as.formula(paste0("sim_",i," ~ Education + Catholic")),swiss)
+  m_n <- lm(as.formula(paste0("sim_",i," ~ Sepal.Width")),iris)
   resid(m_n)
 })
 par(mfrow=c(3,3))
@@ -230,7 +213,7 @@ for(i in 1:9){
 }
 ```
 
-![plot of chunk unnamed-chunk-13](simu_pres-figure/unnamed-chunk-13-1.png)
+![plot of chunk unnamed-chunk-10](simu_pres-figure/unnamed-chunk-10-1.png)
 
 Simulation for checking model fit - Exercice
 ==============================================
@@ -242,31 +225,78 @@ $$Sepal.Length \sim N(\alpha + \beta * Sepal.Width, \sigma)$$
 * Simulate 10 new set of Sepal Length from this model,
 * re-fit models to these different simulations and 
 * check the homogeneity of the variance of these simulated data (residuals vs fitted values)
+* Bonus: simulate new set of response variables without using the simulate functions
+* Bonus: load the dataset "test_data.csv" into R, fit the following model: 
+      glmer(observedResponse ~ Environment1 + (1|group) , family = "poisson", data = ...), try to find out if the data are over or underdispersed
 
-Simulation for checking model fit - Excercice Bonus
-===============================================
+Basic steps for model checking simulation
+==========================================
 
-Simulate new set of response variables without using the simulate functions
+* Draw new response variables based on the model via **simulate**
+* re-fit the model to these new response variables
+* extract the value(s) of interest: number of 0s, residuals ...
+* this is equivalent to parametric bootstrapping
 
-Simulation for checking model fit - Solution
-=============================================
+More things to check out
+======================================
+
+* The DHARMa package
+* https://rpubs.com/hughes/68723 (shameless self promotion)
+* The ARM book: http://www.stat.columbia.edu/~gelman/arm/ (chapters 7 and 8)
+
+Simulating ecological processes
+=====================================
+
+Simulation does not stop at statistical models, any models can be simulated
+
+For instance, imagine a predator having a success rate of 50% in successfully subduing a prey, we can easily simulate a predator attacking 10 times using our simulation knowledge:
 
 
 ```r
-library(plyr)
-data("iris")
-m <- lm(Sepal.Length ~ Sepal.Width, iris)
-new_y <- simulate(m,9)
-modmat <- model.matrix(terms(m),iris)
-par(mfrow=c(3,3))
-a_ply(new_y,2,function(y){
-  new_m <- lm.fit(modmat,y[,1])
-  plot(fitted(new_m),resid(new_m))
-  abline(h=0,lty=2,col="red")
-})
+rbinom(n = 10, size = 1, prob = 0.5)
 ```
 
-![plot of chunk unnamed-chunk-14](simu_pres-figure/unnamed-chunk-14-1.png)
+```
+ [1] 0 0 1 1 0 0 0 0 1 1
+```
+
+Simulating ecological processes - Exercice
+======================================
+
+To make it more interesting, assume that each attack is consuming energy and so after each failed attack the success of the subsequent attack is declined by 10%
+
+* Simulate 10 attacks taking the starvation into account
+* Bonus: put this in a function to be able to vary the number of attacks, the baseline sucess rate but also the decline in attack success
+* Bonus: simulate several individuals and plot the distribution of total number of subdued preys
+
+Simulating ecological processes - Movement
+=============================
+
+Movement is a cool process to simulate
+
+Movement can be simulated based on two information:
+* step length
+* turning angles
+
+And from the following infos:
+
+* new_x = old_x + length * cos(angle)
+* new_y = old_y + length * sin(angle)
+
+Simulate the random walk of an individual assuming uniform angle distribution and normally distributed step length with mean 10 and sd 2
+
+Bonus: make it a function and simulate different individuals
+Bonus: Try different distributions for step length and turning angles
+
+
+Simulation - final words
+=============================
+
+Simulations is really about two things:
+
+* A model of how the world work (can be any type of model)
+* Some stochasticity in certain aspects of the models (the magic "~")
+
 
 
 
