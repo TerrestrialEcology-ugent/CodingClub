@@ -28,8 +28,8 @@ runif(n = 10, min = 0, max = 10)
 ```
 
 ```
- [1] 5.0595058 0.6402099 8.1797133 7.8459542 4.1261361 2.4902452 3.8187912
- [8] 9.0134857 1.5458878 4.2628845
+ [1] 1.000673 1.865291 2.041160 8.758297 1.270327 5.044570 5.048206
+ [8] 2.194853 5.158429 9.878023
 ```
 
 Generate **r**andom **norm**al values:
@@ -40,8 +40,8 @@ rnorm(n = 10, mean = 0, sd = 5)
 ```
 
 ```
- [1]   4.416878   5.277048   5.411496  -2.168815  -2.494758   1.609222
- [7] -10.115260   4.157660   2.826946  -1.672523
+ [1] -0.2372572  3.1006836  0.1074503  4.9644669 -2.1504254 -5.6309748
+ [7] -0.6847110 10.4923676  0.5919222 -4.4162539
 ```
 
 Generating stochasticity - the r* functions
@@ -55,7 +55,7 @@ rbinom(n = 10, size = 10, prob = 0.5)
 ```
 
 ```
- [1] 7 8 3 5 5 5 4 4 5 6
+ [1] 6 7 9 3 3 3 3 4 2 4
 ```
 
 Generate **r**andom **pois**son values:
@@ -66,7 +66,7 @@ rpois(n = 10, lambda = 5)
 ```
 
 ```
- [1]  5  4  4  2  9  7  5 10  5  8
+ [1] 3 6 3 4 3 8 3 3 4 6
 ```
 
 
@@ -81,7 +81,7 @@ rbinom(n = 1, size = 100, prob = 0.488)
 ```
 
 ```
-[1] 52
+[1] 44
 ```
 
 Or:
@@ -92,7 +92,7 @@ sum(rbinom(n = 100, size = 1, prob = 0.488))
 ```
 
 ```
-[1] 62
+[1] 52
 ```
 
 Exercice
@@ -200,6 +200,76 @@ Power analysis - Results
 =================================================
 
 ![plot of chunk unnamed-chunk-12](simu_pres-figure/unnamed-chunk-12-1.png)
+
+Simulation for checking model fit
+===============================================
+
+The idea:
+
+* If your idea of the data-generating process (aka the model) is not too bad then:
+* data simulated based ont he model fit should not be too far from the real data
+* this can be used, for instance: residuals checks, checking some statistic of the data, over or underdispersion ...
+
+Simulation for checking model fit - Example I
+===============================================
+
+
+```r
+library(datasets)
+data("swiss")
+m <- lm(Fertility ~ Catholic + Education, swiss)
+swiss <- cbind(swiss, simulate(m, nsim = 9))
+new_resid <- sapply(1:9,function(i){
+  m_n <- lm(as.formula(paste0("sim_",i," ~ Education + Catholic")),swiss)
+  resid(m_n)
+})
+par(mfrow=c(3,3))
+for(i in 1:9){
+  qqnorm(new_resid[,i])
+  qqline(new_resid[,i])
+}
+```
+
+![plot of chunk unnamed-chunk-13](simu_pres-figure/unnamed-chunk-13-1.png)
+
+Simulation for checking model fit - Exercice
+==============================================
+
+Fit the following model to the __iris__ dataset:
+
+$$Sepal.Length \sim N(\alpha + \beta * Sepal.Width, \sigma)$$
+
+* Simulate 10 new set of Sepal Length from this model,
+* re-fit models to these different simulations and 
+* check the homogeneity of the variance of these simulated data (residuals vs fitted values)
+
+Simulation for checking model fit - Excercice Bonus
+===============================================
+
+Simulate new set of response variables without using the simulate functions
+
+Simulation for checking model fit - Solution
+=============================================
+
+
+```r
+library(plyr)
+data("iris")
+m <- lm(Sepal.Length ~ Sepal.Width, iris)
+new_y <- simulate(m,9)
+modmat <- model.matrix(terms(m),iris)
+par(mfrow=c(3,3))
+a_ply(new_y,2,function(y){
+  new_m <- lm.fit(modmat,y[,1])
+  plot(fitted(new_m),resid(new_m))
+  abline(h=0,lty=2,col="red")
+})
+```
+
+![plot of chunk unnamed-chunk-14](simu_pres-figure/unnamed-chunk-14-1.png)
+
+
+
 
 
 

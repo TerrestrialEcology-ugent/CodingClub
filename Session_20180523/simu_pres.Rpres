@@ -170,5 +170,69 @@ pow_slp <- sapply(n,function(n) sum(replicate(n_rep,pow_fun(n)) < 0.05) / n_rep)
 abline(h=0.8,lty=2,lwd=2)}
 ```
 
+Simulation for checking model fit
+===============================================
+
+The idea:
+
+* If your idea of the data-generating process (aka the model) is not too bad then:
+* data simulated based ont he model fit should not be too far from the real data
+* this can be used, for instance: residuals checks, checking some statistic of the data, over or underdispersion ...
+
+Simulation for checking model fit - Example I
+===============================================
+
+```{r}
+library(datasets)
+data("swiss")
+m <- lm(Fertility ~ Catholic + Education, swiss)
+swiss <- cbind(swiss, simulate(m, nsim = 9))
+new_resid <- sapply(1:9,function(i){
+  m_n <- lm(as.formula(paste0("sim_",i," ~ Education + Catholic")),swiss)
+  resid(m_n)
+})
+par(mfrow=c(3,3))
+for(i in 1:9){
+  qqnorm(new_resid[,i])
+  qqline(new_resid[,i])
+}
+```
+
+Simulation for checking model fit - Exercice
+==============================================
+
+Fit the following model to the __iris__ dataset:
+
+$$Sepal.Length \sim N(\alpha + \beta * Sepal.Width, \sigma)$$
+
+* Simulate 10 new set of Sepal Length from this model,
+* re-fit models to these different simulations and 
+* check the homogeneity of the variance of these simulated data (residuals vs fitted values)
+
+Simulation for checking model fit - Excercice Bonus
+===============================================
+
+Simulate new set of response variables without using the simulate functions
+
+Simulation for checking model fit - Solution
+=============================================
+
+```{r}
+library(plyr)
+data("iris")
+m <- lm(Sepal.Length ~ Sepal.Width, iris)
+new_y <- simulate(m,9)
+modmat <- model.matrix(terms(m),iris)
+par(mfrow=c(3,3))
+a_ply(new_y,2,function(y){
+  new_m <- lm.fit(modmat,y[,1])
+  plot(fitted(new_m),resid(new_m))
+  abline(h=0,lty=2,col="red")
+})
+```
+
+
+
+
 
 
