@@ -1,0 +1,316 @@
+The meta-analysis
+========================================================
+author: by Jens
+date: 
+autosize: true
+Sorry about the bad layout, I'm new to R presentations
+
+Content
+=======================================================
+- What is a meta-analysis, why do we need it?
+- approach and differences to experiments
+- hypothesis
+- study design
+- scoping [exercise]
+- data extraction [exercise]
+- analysis
+
+What is a meta-analysis
+========================================================
+- A special version of a __review__ 
+- A review is the _synthesis_ and _critical appraisal_ of existing studies
+  - __narrative__ (based on expert opinion a.k.a. papers in your library, e.g. TREE) or __systematic__ (structured search):
+      - __qualitative__ (classical review) or __quantitative__ (aka meta-analysis)
+
+- It is not a review if it does not critically appraise studies (vote-counts, counting studies with effect vs studies without effect)
+
+
+Why do we need meta-analyses?
+========================================================
+- conflicting results depending on particularities of study system or region
+- underpowered studies
+- publication bias
+- test new hypotheses
+
+Who should do meta-analyses?
+========================================================
+- everyone! It changes the way we view science:
+  - away from text-book examples to incremental knowledge increase
+  - (im-) proper reporting standards   
+        - "40-120 individuals per treatment"
+        - "Locations: Onishica (ON:  44°1O'N,  30  m)"
+  - open science and transparency
+- but not without some introduction
+  - many (MANY) meta-analyses are shoddy
+    
+
+How to do a meta-analysis
+========================================================
+1. The hypothesis
+2. Study design (search strategy, extraction and analysis)
+3. Pre-registering
+4. collect data
+4. Analysis (weighted by reliability)
+5. Write and submit
+
+
+Differences to experiments
+=======================================================
+- larger datasets
+- multiple sources and data formats
+
+- costly (requires a lot of time)
+- gets a lot of attention (citations)
+- "negative" results are okay(ish)
+
+
+Differences (2)
+=======================================================
+- synthesis may affect policies etc -> requires extra rigour
+- multiple decisions that require expert opinion -> need to be objective
+- meta-analysis may be updated after a few years, or replicated by someone else -> need to be transparent (open) 
+
+
+
+1. The hypothesis
+========================================================
+- answerable
+- not answered yet
+- PICO: Population, Intervention/Exposure, Comparator, Outcome
+-  e.g.   "is poison-baiting effective at eradicating rats from islands"
+
+__example: "Does beetle size increase with mean annual temperature?"__
+
+
+2. Study design
+========================================================
+__"Does beetle size vary with temperature?"__
+- identify search strategy - this defines sample size!
+   -  web of science, "(coeloptera OR beetle) AND size AND temperat*"
+  - will give irrelevant and potentially relevant studies, filter by title
+- formulate inclusion criteria - this defines bias and heterogeneity in studies!
+    - only lab studies
+    - either multiple sites or long-term data on single site (5 minimum)
+- formulate rules for data extraction - this is pretty much standardised
+  - raw data (body size in mm) or mean + s.e. , annual mean temperature 
+- formulate analysis approach - this is also standardized
+  - linear mixed-effects model with log(body size) ~ annual mean temperature, random = study, weight = 1/s.e.
+- do a pilot experiment - "scoping"
+- refine rules
+
+Exercise: Scoping
+==============================
+- Try playing around with search terms in web of science!
+check results of __"(coleoptera OR beetle) AND size AND temperat*"__ and try to improve it
+  - many relevant studies
+  - few false positives
+
+My own meta-analysis (differnt topic) had 1641 results in web of science, 300 seemed relevant, and 30 were included (1:50)  
+Recent Ecology Letters meta-analysis: 27.854 results, 192 studies (1:150)
+
+Tips
+==============================
+- titles often tell not much (e.g. 26 entries of "winter is coming") - "topic" is better (title + keywords + abstract)  
+___________________
+- useful operators "x AND (y OR z) NOT "bill gates"
+- wildcards: \*ldcar\*, flavo$r", "organi?ation"
+- quotation marks: **robber fly** finds "pollen robber and syrphid fly", **"robber fly"** does not
+- lemmatization: **range expansion** will find "Effective expansion of satellite laser ranging network", but **"range" expansion** does not)   
+____________  
+- use forward citation and check why relevant articles were not found
+- if you find an older meta-analysis, your search should find at least all articles they found
+- no need to find ALL studies, but aim for around 20 studies
+ 
+
+own example
+============================================================
+__search term__
+__TS__ = (("day length" __OR__ photoperiod\* __OR__ diapaus\* __OR__ hibern\* __OR__ dorman\* ) __AND__ (geogr\* __OR__ "range" __OR__ latitud\* __OR__ longitud\*) (7500) results
+
+__strategy__  
+\#2 __#1 AND SU__ = "Entomology"  
+
+\#3 __#1 NOT #2 AND SU =__  "Zoology"  __AND TI__ = (centipede* __OR__ collembol* __OR__ insect$ __OR__ *PTERA [x50])
+
+\#4 [...] __NOT__ __SU =__[vertebrate taxa]
+  [similar stuff for plant journals and ecology]
+
+\#16: __#14 NOT #15 NOT TI =__ (human __OR__ sleep\* __OR__ disorder __OR__ depress\* __OR__ marine\* __OR__ [...] __OR__ palaeo\* __OR__ \$vertebra\* [...] __OR__ estrus __OR__ suprachiasm\* __OR__ microb\* [...] __OR__ \*ceae __OR__ bloom __OR__ simulation __OR__ QTL __OR__ spring __OR__ (tree __NEAR__ phenology))   
+- this optimization took ~ 20 h
+- by hand: 7500 * 10 sec = 20.8 h
+- transparent and changes are easy (e.g. including "cline")
+
+
+My results
+===========================================
+
+(coelopt* OR staphilin* OR Scarab* OR curculio* OR cerambic* or chrysomel* OR beetle) AND (developm* OR allometr* OR body size) AND (climat* OR temperat*): 
+__1755 results__
+
+First hits include metaanalysis on exactly that topic, and a really large study; both from 2018. That means we are done!  
+[we continue anyway]
+
+
+checking results from meta-analysis
+===========================================================
+- "To find suitable papers, __we searched the Web of Science using the keywords: “Coleoptera” and “temperature”. We also included studies from previously published dataset compilations when appropriate.__ "
+- The reviewers apparently had little experience with meta-analyses. This
+   - is not reproducible ( date of search?), 
+   - not transparent (number of hits? which compilations?)
+   - not objective (what is appropriate?). 
+- there are further issues in the way data is reported and analysed, so please do NOT use this meta-analysis as reference!
+
+
+
+Relevance/eligibility - Exercise
+===========================================
+- you can find the first 500 entries in refsmeta_cc.xlsx
+- Checking the relevance, at 30 s per article it takes 13 h. 
+- For scoping we can work on a subset of e.g. 160 studies (10%)
+- Lets do it on the first 10!
+- tip: open browser, type dx.doi.org/ and paste doi
+
+[5+ sites, lab, with body size of beetles]
+
+Results
+==============================================
+1. nematodes, not beetles
+2. 2 populations only
+3. only 1 pop
+4. eligible
+5. 2 pops
+6. no body size meas
+7. eligible
+8. model
+9. single ummm.... population
+10. eligible
+
+After ~ 150 studies we can estimate number of studies and data points
+
+
+data extraction - Exercise
+===================================================
+- we can now try to extract data (body size in mm or mean + s.e., monthly mean temperature) from some studies:
+- Huang Y, Ao Y, Jiang M, Way MO. Variation of Body Size in Rice Water Weevil (Coleoptera: Curculionidae) and Its Associations with Population Biology. Journal of Insect Science. 2018;18(1):4. doi:10.1093/jisesa/iex099.
+
+- Testing environmental correlates of clines in clades: an example from cassidine beetles, doi: https://doi.org/10.1111/icad.12250
+
+- Satar, G., & Uygun, N. (2012). The effects of various temperatures on development and fecundity of Scymnus subvillosus (Goeze)(Coleoptera: Coccinellidae) feeding on Aphis gossypii Glover (Hemiptera: Aphididae). Türk biyo müc derg, 2, 169–182. 
+
+- KUWANA, Y (1986). ORIGIN OF LEUKOMA-CANDIDA (STAUDINGER) IN JAPAN AS INFERRED FROM GEOGRAPHICAL VARIATION IN PHOTOPERIODIC RESPONSE. Japanese Journal of Applied Entomology and Zoology, 30, 173-178.
+- (may not make sense for Satar + Kuwana studies)
+
+Problems??
+==================================================
+-  we need procedure if temperature is not reported; we should maybe note coordinates as well 
+- the first publication has all coordinates and body sizes. Nice reporting.
+- the second publication has a lot of data (S2), but no information about collection sites.
+- the third one is difficult to find, probably because the original title is in turkish
+- the fourth is a bit difficult to understand
+- Even if we know the paper we may have no access
+  - preprints, research gate help
+  - "sci hub" solves most problems but is illegal 
+  - writing authors is always fun (except when the paper is from the 70s)
+  - if all else fails, go for inter-library loan 
+
+next steps
+========================================================
+- We are done with the scoping, and now we know whether a meta-analysis makes sense! Hooray!
+- Do everything on the full dataset (most boring part)
+- turn extracted data into effect size + reliability
+- do analysis
+- write
+
+Data extraction methods
+=======================================================
+- potential data:
+  - raw data
+  - figures
+      -  try webplotdigitizer (google) on ryan.pdf
+  - mean + s.e.
+  - F/t/chi², df, p
+  - r, R²
+  
+- potential effect sizes for meta-analysis
+  - standardized mean difference (Hedges d, Hedges g)
+  - response ratio, odds ratio
+  - pearson's r, Fisher's z
+
+- can be converted
+- missing data can be imputed (consult your statistician(s) of choice)
+  
+
+Analysis: some data
+=======================================================
+ - 10 studies, temperature vs control, yields 10 effect sizes + s.e.
+```{r, echo=F}
+effect_size<-rnorm(10)+2
+st_err<-runif(10)
+var <- effect_size + rnorm(10)
+#abline(lm(effect_size~var))
+study<-1:10
+```
+```{r,echo=T}
+summary(lm(effect_size~1))
+```
+Analysis: model
+=======================================================
+```{r,echo=T}
+library(metafor)
+m<-rma(effect_size~1, sei = st_err)
+summary(m)
+```
+
+Analysis: Forest plot
+=======================================================
+```{r}
+forest(m)
+```
+
+
+Analysis: Funnel plot
+=======================================================
+```{r,include=F}
+#create random dataset
+st_err<-runif(1000,min=0.01,max=1)
+effect_size<-NA
+for ( i in 1:length(st_err)){ #produces standard errors which are proportional to effect size
+  effect_size[i]<-runif(1,min=-st_err[i]*2,max=st_err[i]*2)+2
+}
+effect_size<-effect_size+rnorm(length(effect_size))*st_err/3 #add a bit noise to look more realistic
+
+#add publication bias: only studies with large effect size will be published
+include <-effect_size>1.5 #false for small effect sizes
+#well that is too harsh, lets get a few back in
+include[include==F]<-rbinom(length(include[include==F]),1,0.2)#studies with small effect have only 30% chance to be included
+st_err<-st_err[include>0]
+effect_size<-effect_size[include>0]
+
+```
+``r length(effect_size)`` studies with 1 effect size each
+```{r}
+m<-rma(effect_size~1, sei = st_err)
+funnel(m)
+```
+
+
+A more realistic model
+=============================================
+- Ecological data is usually more complex --> mixed-effects models
+- rma.mv(log_body_size ~ temperature, V = st_err, random =~ temperature|family\genus)
+- produces effect + CI + credible interval
+- quite new, still experimental
+- p-values are wrong (df does not account for nesting)
+- I², H² calculation difficult (see metafor website for solution)
+
+Writing
+=======================================================
+- Reporting standards are different from standard publications (rigour, objectivity, transparency!), so the methods section includes much more detail
+- A good example with proper reporting is  https://onlinelibrary.wiley.com/doi/pdf/10.1111/ele.12934 (Ecology Letters)
+
+
+
+sources
+=========================================================
+GUIDELINES for SYSTEMATIC REVIEWS in ENVIRONMENTAL MANAGEMENT, collaboration for environmental evidence 
+meta-analyises in ecology and evolution
