@@ -31,8 +31,7 @@ Solution II
 =======================================================
 
 ```{r}
-nb_sims <- 50
-nb_girls <- sapply(1:nb_sims, function(x) rbinom(1,100,0.488))
+nb_girls <-  rbinom(n=50,size=100,prob=0.488)
 hist(nb_girls)
 ```
 
@@ -93,7 +92,7 @@ Hint: Think function!
 Power analysis - Results
 =================================================
 
-```{r, echo=FALSE, fig.width=12, fig.height=6,out.width="1920px",out.height="1080px"}
+```{r, fig.width=12, fig.height=6,out.width="1920px",out.height="1080px"}
 n <- seq(10,100,10)
 pow_fun <- function(n){
   x <- runif(n,-2,2)

@@ -15,6 +15,7 @@ In this repo you will find notes from the coding club meetings of the UGent form
 * Session_20180218: an introduction to github
 * Session_20180405: an introduction to latex
 * Session_20180626: an introduction to Meta-analyses
+
 # How to use
 
 You can just download the whole files in your computer by clicking the clone/download button. If you are a Git user you are welcome to fork the repo and open pull request if you want to submit some changes. To avoid downloading the whole repo every time, if you have git installed on your computer you can open a terminal and just enter:

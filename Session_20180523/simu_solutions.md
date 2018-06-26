@@ -35,8 +35,7 @@ Solution II
 
 
 ```r
-nb_sims <- 50
-nb_girls <- sapply(1:nb_sims, function(x) rbinom(1,100,0.488))
+nb_girls <-  rbinom(n=50,size=100,prob=0.488)
 hist(nb_girls)
 ```
 
@@ -92,7 +91,7 @@ lm(formula = y ~ x)
 
 Coefficients:
 (Intercept)            x  
-     0.6605       2.0195  
+     0.7417       2.0243  
 ```
 
 Power analysis - Exercice
@@ -114,6 +113,21 @@ Hint: Think function!
 
 Power analysis - Results
 =================================================
+
+
+```r
+n <- seq(10,100,10)
+pow_fun <- function(n){
+  x <- runif(n,-2,2)
+  y <- rpois(n,lambda=exp(0.5 + 0.25 * x))
+  m <- glm(y~x,family = "poisson")
+  return(summary(m)$coefficients[2,4])
+}
+n_rep <- 100
+pow_slp <- sapply(n,function(n) sum(replicate(n_rep,pow_fun(n)) < 0.05) / n_rep)
+{plot(n,pow_slp,type="l",cex=2)
+abline(h=0.8,lty=2,lwd=2)}
+```
 
 <img src="simu_solutions-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="1920px" height="1080px" />
 
