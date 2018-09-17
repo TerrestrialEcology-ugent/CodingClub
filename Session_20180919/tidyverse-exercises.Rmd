@@ -1,0 +1,235 @@
+---
+title: "introduction to tidyR and Dplyr"
+author: "Bram Sercu"
+date: "October 19, 2017"
+output: html_document
+---
+
+
+# 0. load packages and data
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+
+# 1. create tibble and explore differences between tibble and dataframe
+
+```{r}
+# change dataframe to tible
+cars_tib <- as_tibble(cars)
+
+# type cars and cars_tib in the console
+# show first 15 rows from cars_tib with print(cars_tib, n=12, width= Inf)
+
+# create a similar dataframe and tibble and check the differences (copy to console)
+
+tib1 <- tibble(
+  numbers = c(1,2,3,4), 
+  dutch = c("één", "twee", "drie", "vier"),
+  english = c("one", "two", "three", "four")
+)
+
+df1 <- data.frame(
+  numbers = c(1,2,3,4), 
+  dutch = c("één", "twee", "drie", "vier"),
+  english = c("one", "two", "three", "four")
+)
+
+
+tib1$numbers
+df1$numbers
+
+tib1$n
+df1$n
+
+tib1[, "numbers"]
+df1[, "numbers"]
+
+tib1[, c("numbers", "english")]
+df1[, c("numbers", "english")]
+
+
+```
+
+# 2. tidy your data
+
+## 2.1, Using gather
+
+use the command 'gather' when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
+- http://r4ds.had.co.nz/tidy-data.html#gathering
+
+```{r}
+# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
+# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
+
+nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
+```
+
+Make this data tidy:
+
+```{r}
+
+### your code here:
+
+```
+
+
+## 2.2 Using spread
+
+Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
+- http://r4ds.had.co.nz/tidy-data.html#spreading
+
+```{r}
+# dataset with lenght of inflorescence shoot, root and length/width of leaf
+plant_size <- read.table("data/plant_size.txt", header=T)
+
+```
+
+Make this data tidy:
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 2.3 Using separate and unite
+
+The functions 'seperate' and 'unite' let you, resprectively, split the content of a column in two columns or join columns according to a specified seperator.
+
+From the dataset in 2.2 separate the width/length measurement into two separate columns:
+
+```{r}
+
+### Your code here
+
+```
+
+Now re-unite the width / length measurements into a new column: "width_length" (separator "_"):
+
+```{r}
+
+### Your code here
+
+```
+
+# 3. dplyr
+
+## 3.1 filter
+
+In the "plant_size" dataset, filter rows to keep only observations from plot A
+
+```{r}
+
+### Your code here
+
+```
+
+## 3.2 arrange
+
+From the tidy plant size dataset arrange plants by inflorescence length
+
+```{r}
+
+### Your code here
+
+```
+
+Tipp, here is how to get this tidy data
+
+```{r}
+plant_size_tidy <- spread(plant_size, part, length)
+plant_size_tidy <- separate(plant_size_tidy, col = leaf, into = c("leaf_length","leaf_width"),sep="/")
+```
+
+
+## 3.3 select
+
+From the tidy plant size only keep the Plant, Plot and two leaves columns
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 3.4 mutate
+
+From the tidy plant size compute the leaf area (assuming leaves are rectangles)
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 3.5 summarise + group_by
+
+From the tidy plant size compute the average and median root length per plot
+
+```{r}
+
+### Your code here
+
+```
+
+
+
+
+# 3. work with you data
+## 3.1 subsetting
+
+We will work with the dataset 'nr_seedlings_tidy'
+1. extract measurements that were taken before Julian day 331 
+2. extract measurements for flowers 'b'
+3. extract measurements that were taken before Julian day 331 for flowers 'b'
+4. extract measurements that were taken before Julian day 331 for flowers 'b' and keep all columns except the column 'table'
+
+```{r}
+nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
+```
+
+## 3.2 calculate new variables
+Exercise for dataset 'plant_size_tidy'
+1. calculate the leaf area
+2. calculate the fraction of leaf length to inflorescence length
+3. calculate normalized values for each variable.
+
+```{r}
+
+```
+
+## 3.3 summarise
+Exercise for dataset 'plant_size_tidy'
+1. calculate average length of roots
+2. calculate average length of all columns
+3. calculate average length of roots per plot
+4. calculate average length of all columns per plot
+
+```{r}
+
+```
+
+
+## 3.4 combinations
+
+Exercise for dataset 'nr_seedlings_tidy'
+1. calculate total nr of seedlings per plant per julian day as new base dataset
+2. calculate total nr of seedlings per inflorescence from the new dataset
+3. calculate total nr of seedlings per plant
+4. calculate the cumulative (from the lowest julian day to the highest) nr seedlings per plant  (inspect the results!)
+5. remove rows that contains NA as value for nr_seedlings (and run nr 4 again)
+6. Join the datatable 'nr_seedlings_tidy_3.4.4' with 'plant_size_tidy' and keep only plants that are available in 'plant_size_tidy'
+7. as nr 6 but keep all plants from both datatables.
+
+```{r}
+nr_seedlings_tidy3.4.1 <-
+
+
+```
+

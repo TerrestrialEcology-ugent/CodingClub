@@ -1,0 +1,239 @@
+---
+title: "introduction to tidyR and Dplyr"
+author: "Bram Sercu"
+date: "October 19, 2017"
+output: html_document
+---
+
+
+# 0. load packages and data
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(tibble) #for me (lionel) I had to load this extra library ...
+
+df1 <- read.txt()
+```
+
+
+# 1. create tibble and explore differences between tibble and dataframe
+```{r}
+# change dataframe to tible
+cars_tib <- as_tibble(cars)
+
+# type cars and cars_tib in the console
+# show first 15 rows from cars_tib with print(cars_tib, n=12, width= Inf)
+
+# create a similar dataframe and tibble and check the differences (copy to console)
+# tibbles and dataframes are very similar but differ in a few small things
+
+tib1 <- tibble(
+  numbers = c(1,2,3,4), 
+  dutch = c("één", "twee", "drie", "vier"),
+  english = c("one", "two", "three", "four")
+)
+
+df1 <- data.frame(
+  numbers = c(1,2,3,4), 
+  dutch = c("één", "twee", "drie", "vier"),
+  english = c("one", "two", "three", "four")
+)
+
+
+tib1$numbers
+df1$numbers
+
+tib1$n
+df1$n
+# in tibbles you have to enter the full name of the columnnames
+
+
+tib1[, "numbers"]
+df1[, "numbers"]
+# tibbles return always a tibble as output, dataframes can return a vector
+
+
+tib1[, c("numbers", "english")]
+df1[, c("numbers", "english")]
+# but in this case output is either a tibble or a dataframe
+
+```
+
+# 2. tidy your data
+use the commands gather when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
+- http://r4ds.had.co.nz/tidy-data.html#gathering
+
+Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
+- http://r4ds.had.co.nz/tidy-data.html#spreading
+
+Specification of columns to gather. Use bare variable names. Select all variables between x and z with x:z, exclude y with -y.
+
+
+## 2.1
+```{r}
+# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
+# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
+
+nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
+
+
+nr_seedlings_tidy <- gather(nr_seedlings, key = "julian_day", value = "nr_seedlings", -plant, -inflorescence, -flower, -table, -plate)
+
+#OR
+
+nr_seedlings_tidy <- nr_seedlings %>% 
+			gather(key = "julian_day", value = "nr_seedlings", JD233:JD399)
+```
+
+## 2.2
+```{r}
+# dataset with lenght of inflorescence shoot, root and length/width of leaf
+
+plant_size <- read.table("data/plant_size.txt", header=T)
+
+plant_size_tidy <- plant_size %>% 
+			spread(key=part, value= length) %>% 
+  			separate(leaf, into= c("leaf_length","leaf_width"), sep="/")
+
+```
+
+## 2.3
+```{r}
+# unite enables to unite two columns two one
+# reverse what you did in the previous exercise and combine the length and width of the leaf again to  one column using '_' as separator between the values
+
+plant_size_tidy %>%
+	 unite(new_leaf, leaf_length, leaf_width, sep="_") -> plant_size_less_tidy
+```
+
+
+# 3. work with you data
+## 3.1 subsetting
+
+We will work with the dataset 'nr_seedlings_tidy'
+1. extract measurements that were taken before Julian day 331 
+2. extract measurements for flowers 'b'
+3. extract measurements that were taken before Julian day 331 for flowers 'b'
+4. extract measurements that were taken before Julian day 331 for flowers 'b' and keep all columns except the column 'table'
+
+```{r}
+# preparation
+nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
+
+# the previous solution would not work if 'JD' is sometimes in capitals and sometimes in small letters 'jd'
+# in that case it would make sense to either call the columns directly or separate the column to obtain a numeric column.
+
+nr_seedlings_tidy <- nr_seedlings_tidy %>% 
+  separate(julian_day, into = c("rubish", "julian_day"), sep = 2)
+nr_seedlings_tidy$julian_day <- as.numeric(nr_seedlings_tidy$julian_day)
+nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day<331)
+
+nr_seedlings_tidy_3.1.2 <- nr_seedlings_tidy %>% filter(flower == "b")
+
+nr_seedlings_tidy_3.1.3 <- nr_seedlings_tidy %>% filter(flower == "b" & julian_day<331)
+
+nr_seedlings_tidy_3.1.4 <- nr_seedlings_tidy %>% filter(flower == "b" & julian_day<331) %>%
+  select(-table)
+
+```
+
+## 3.2 calculate new variables
+Exercise for dataset 'plant_size_tidy'
+1. calculate the leaf area
+2. calculate the fraction of leaf length to inflorescence length
+3. calculate scaled variables with mean 0 and sd 1 for each variable.
+
+```{r}
+#turn the length and width variables into numeric
+plant_size_tidy <- plant_size_tidy %>% mutate_at(as.numeric(as.character()),-plant,-plot)
+
+
+plant_size_tidy_3.2.1 <- plant_size_tidy %>% mutate(leaf_area = leaf_length*leaf_width)
+
+plant_size_tidy_3.2.2 <- plant_size_tidy %>% mutate(leaf_area = leaf_length/inflorescence)
+
+# create own function to scale
+scaled <- function(x){
+  (x-mean(x))/sd(x)
+}
+
+plant_size_tidy_3.2.3 <- plant_size_tidy %>% mutate_at(vars(inflorescence:root), funs(scaled))
+
+# Or use existing R function
+plant_size_tidy_3.2.3B <- plant_size_tidy %>% mutate_at(vars(inflorescence:root), funs(scale))
+
+```
+
+## 3.3 summarise
+Exercise for dataset 'plant_size_tidy'
+1. calculate average length of roots
+2. calculate average length of all columns
+3. calculate average length of roots per plot
+4. calculate average length of all columns per plot
+
+```{r}
+plant_size_tidy %>% summarise(avg = mean(root))
+
+plant_size_tidy %>% summarise_all(funs(mean))
+
+plant_size_tidy %>% group_by(Plot) %>% summarise(avg = mean(root))
+
+plant_size_tidy %>% group_by(Plot) %>% summarise_all(funs(mean, sd))
+
+```
+
+
+## 3.4 combinations
+
+Exercise for dataset 'nr_seedlings_tidy'
+1. calculate total nr of seedlings per plant per julian day as new base dataset
+2. calculate mean and sd of nr of seedlings per inflorescence from the new dataset
+3. calculate total nr of seedlings per plant
+4. calculate the cumulative (from the lowest julian day to the highest) nr seedlings per plant  (inspect the results!)
+5. remove rows that contains NA as value for nr_seedlings (and run nr 4 again)
+6. Join the datatable 'nr_seedlings_tidy_3.4.4' with 'plant_size_tidy' and keep only plants that are available in 'plant_size_tidy'
+7. as nr 6 but keep all plants from both datatables.
+
+```{r}
+nr_seedlings_tidy_3.4.1 <- nr_seedlings_tidy %>%
+					 group_by(plant, julian_day, inflorescence) %>%
+					 summarise(nr_seedlings= sum(nr_seedlings))
+
+# we add inflorescence as argument to the group_by command to keep it as a column in order to use it in the next exercise 3.4.2
+nr_seedlings_tidy_3.4.2 <- nr_seedlings_tidy_3.4.1 %>% 
+					group_by(inflorescence) %>%
+				        summarise(mean_nr_seedlings= mean(nr_seedlings), sd_nr_seedlings= sd(nr_seedlings))
+
+nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.1 %>%
+					 group_by(plant) %>%
+					 summarise(total_nr_seedlings= sum(nr_seedlings))
+
+nr_seedlings_tidy_3.4.4 <- nr_seedlings_tidy_3.4.1 %>%
+					 group_by(plant) %>%
+					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+# when there is one NA somewhere, all subsequent values will be NA
+
+# to solve the problem with the NA's we can either decide to remove rows with NA from the dataset
+# be aware that this removes some rows from the dataframe
+nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>%
+					 filter(!is.na(nr_seedlings)) %>%
+  					 group_by(plant) %>% 
+  					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+
+# another option is to replace NA's with 0
+nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>% 
+  					mutate( nr_seedlings = ifelse(is.na(nr_seedlings),0,nr_seedlings)) %>%
+  					group_by(plant) %>% 
+ 				        mutate(cum_nr_seedlings = cumsum(nr_seedlings))
+
+# you might find that some conflicts arrise due to different names (plant and Plant with capital).
+nr_seedlings_tidy_3.4.6 <- right_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, by = c("plant" = "Plant"))
+
+
+# before performing 7 we will clean up our data so our dataframes are compatible using some other dplyr functions
+nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.3 %>% rename(Plant=plant)
+nr_seedlings_tidy_3.4.7 <- full_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, by = "Plant")
+
+
+```
