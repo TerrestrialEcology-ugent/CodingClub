@@ -784,7 +784,7 @@ hljs.initHighlightingOnLoad();
   <div class="slides">
 
 <section data-state="section" data-transition="linear" data-transition-speed="default">
-<h1>tidyverse-presentation</h1><p>Bram Sercu<br/>October 19, 2017</p>
+<h1>tidyverse-presentation</h1><p>Lionel Hertzog and Bram Sercu<br/>September 19, 2018</p>
 
 <div class="slideContent" >
 
@@ -862,12 +862,12 @@ Valiant                       18.1            6          225
 <section data-transition="linear" data-transition-speed="default">
 <h3>Is this a tidy dataset? (2)</h3>
 <div class="slideContent" >
-<pre><code>    Site   January  February     March
-1 Site 1 12.193572  1.879355 10.503375
-2 Site 2  3.919602 10.103160 10.357555
-3 Site 3  1.647153 10.117766  8.893632
-4 Site 4  5.677745 19.085479 19.002187
-5 Site 5 17.380837  4.694442  5.227094
+<pre><code>    Site   January   February       March
+1 Site 1  4.587846  9.8070052 18.99522176
+2 Site 2 13.009925 14.0295224  4.14655035
+3 Site 3  1.522006 10.8076895  3.26052296
+4 Site 4 10.978922 13.1157420  0.08238068
+5 Site 5  8.258547  0.2750239 19.23027054
 </code></pre>
 
 </div>
@@ -902,21 +902,21 @@ tmp_g
 </code></pre>
 
 <pre><code>     Site    Month Temperature
-1  Site 1  January   12.193572
-2  Site 2  January    3.919602
-3  Site 3  January    1.647153
-4  Site 4  January    5.677745
-5  Site 5  January   17.380837
-6  Site 1 February    1.879355
-7  Site 2 February   10.103160
-8  Site 3 February   10.117766
-9  Site 4 February   19.085479
-10 Site 5 February    4.694442
-11 Site 1    March   10.503375
-12 Site 2    March   10.357555
-13 Site 3    March    8.893632
-14 Site 4    March   19.002187
-15 Site 5    March    5.227094
+1  Site 1  January  4.58784644
+2  Site 2  January 13.00992460
+3  Site 3  January  1.52200593
+4  Site 4  January 10.97892175
+5  Site 5  January  8.25854733
+6  Site 1 February  9.80700519
+7  Site 2 February 14.02952244
+8  Site 3 February 10.80768949
+9  Site 4 February 13.11574205
+10 Site 5 February  0.27502392
+11 Site 1    March 18.99522176
+12 Site 2    March  4.14655035
+13 Site 3    March  3.26052296
+14 Site 4    March  0.08238068
+15 Site 5    March 19.23027054
 </code></pre>
 
 <p>Links</p>
@@ -939,12 +939,12 @@ tmp_g
 <pre><code class="r">(tmp_s &lt;- spread(tmp_g, key = Month , value = Temperature))
 </code></pre>
 
-<pre><code>    Site  February   January     March
-1 Site 1  1.879355 12.193572 10.503375
-2 Site 2 10.103160  3.919602 10.357555
-3 Site 3 10.117766  1.647153  8.893632
-4 Site 4 19.085479  5.677745 19.002187
-5 Site 5  4.694442 17.380837  5.227094
+<pre><code>    Site   February   January       March
+1 Site 1  9.8070052  4.587846 18.99522176
+2 Site 2 14.0295224 13.009925  4.14655035
+3 Site 3 10.8076895  1.522006  3.26052296
+4 Site 4 13.1157420 10.978922  0.08238068
+5 Site 5  0.2750239  8.258547 19.23027054
 </code></pre>
 
 </div>
@@ -1467,8 +1467,8 @@ function commandsForSlide(indexh) {
       transition: 'linear',
       transitionSpeed: 'default',
       rtl: false,
-      width: 960,
-      height: 700,
+      width: 1440,
+      height: 900,
     
       dependencies: []
     });

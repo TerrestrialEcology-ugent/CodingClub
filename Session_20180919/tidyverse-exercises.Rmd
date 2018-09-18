@@ -1,7 +1,7 @@
 ---
-title: "introduction to tidyR and Dplyr"
-author: "Bram Sercu"
-date: "October 19, 2017"
+title: "Back into the tidyverse"
+author: "Lionel Hertzog & Bram Sercu"
+date: "September 19, 2018"
 output: html_document
 ---
 
@@ -13,8 +13,180 @@ library(dplyr)
 library(tidyr)
 ```
 
+# 1. tidy your data
 
-# 1. create tibble and explore differences between tibble and dataframe
+## 1.1, Using gather
+
+use the command 'gather' when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
+- http://r4ds.had.co.nz/tidy-data.html#gathering
+
+```{r}
+# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
+# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
+
+nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
+```
+
+Make this data tidy:
+
+```{r}
+
+### your code here:
+
+```
+
+
+## 1.2 Using spread
+
+Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
+- http://r4ds.had.co.nz/tidy-data.html#spreading
+
+```{r}
+# dataset with lenght of inflorescence shoot, root and length/width of leaf
+plant_size <- read.table("data/plant_size.txt", header=T)
+
+```
+
+Make this data tidy:
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 1.3 Using separate and unite
+
+The functions 'seperate' and 'unite' let you, resprectively, split the content of a column in two columns or join columns according to a specified seperator.
+
+From the dataset in 2.2 separate the width/length measurement into two separate columns:
+
+```{r}
+
+### Your code here
+
+```
+
+Now re-unite the width / length measurements into a new column: "width_length" (separator "_"):
+
+```{r}
+
+### Your code here
+
+```
+
+# 2. dplyr
+
+## 2.1 filter
+
+In the "plant_size" dataset, filter rows to keep only observations from plot A
+
+```{r}
+
+### Your code here
+
+```
+
+## 2.2 arrange
+
+From the tidy plant size dataset arrange plants by inflorescence length
+
+```{r}
+
+### Your code here
+
+```
+
+Tipp, here is how to get this tidy data
+
+```{r}
+plant_size_tidy <- spread(plant_size, part, length)
+plant_size_tidy <- separate(plant_size_tidy, col = leaf, into = c("leaf_length","leaf_width"),sep="/")
+```
+
+
+## 2.3 select
+
+From the tidy plant size only keep the Plant, Plot and two leaves columns
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 2.4 mutate
+
+From the tidy plant size compute the leaf area (assuming leaves are rectangles)
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 2.5 summarise + group_by
+
+From the tidy plant size compute the average and median root length per plot
+
+```{r}
+
+### Your code here
+
+```
+
+
+
+
+# 3. Piping - more advanced manipulation
+
+## 3.1 
+
+From nr_seedlings, do the following (using pipes if you feel like it):
+1. tidy the dataset (gather ...)
+2. Create a new variable: "julian_day" from the number in the column names, ie: from JD233 put 233 in this julian_day column, keep this dataset you will need it later on
+3. Only keep columns: plant, inflorescence, plate, julian_day and value
+4. Compute the total number of observations per plants
+
+```{r}
+
+### Your code here
+
+```
+
+
+## 3.2
+
+From plant_size, do the following:
+1. tidy the dataset, also separating leaf length from leaf width
+2. compute leaf area
+3. compute normalized values for all variables
+
+```{r}
+
+### Your code here
+
+```
+
+## 3.3
+
+From the dataset obtained in 4.1, do the following:
+1. calculate total number of seedlings per plant and per julian day
+2. arrange per plant and per julian day 
+3. calculate the cumulative number of seedlings per plant and per julian day
+4. plot the results
+
+```{r}
+
+### Your code here
+
+```
+
+
+# Bonus: create tibble and explore differences between tibble and dataframe
 
 ```{r}
 # change dataframe to tible
@@ -52,169 +224,6 @@ df1[, c("numbers", "english")]
 
 
 ```
-
-# 2. tidy your data
-
-## 2.1, Using gather
-
-use the command 'gather' when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
-- http://r4ds.had.co.nz/tidy-data.html#gathering
-
-```{r}
-# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
-# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
-
-nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
-```
-
-Make this data tidy:
-
-```{r}
-
-### your code here:
-
-```
-
-
-## 2.2 Using spread
-
-Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
-- http://r4ds.had.co.nz/tidy-data.html#spreading
-
-```{r}
-# dataset with lenght of inflorescence shoot, root and length/width of leaf
-plant_size <- read.table("data/plant_size.txt", header=T)
-
-```
-
-Make this data tidy:
-
-```{r}
-
-### Your code here
-
-```
-
-
-## 2.3 Using separate and unite
-
-The functions 'seperate' and 'unite' let you, resprectively, split the content of a column in two columns or join columns according to a specified seperator.
-
-From the dataset in 2.2 separate the width/length measurement into two separate columns:
-
-```{r}
-
-### Your code here
-
-```
-
-Now re-unite the width / length measurements into a new column: "width_length" (separator "_"):
-
-```{r}
-
-### Your code here
-
-```
-
-# 3. dplyr
-
-## 3.1 filter
-
-In the "plant_size" dataset, filter rows to keep only observations from plot A
-
-```{r}
-
-### Your code here
-
-```
-
-## 3.2 arrange
-
-From the tidy plant size dataset arrange plants by inflorescence length
-
-```{r}
-
-### Your code here
-
-```
-
-Tipp, here is how to get this tidy data
-
-```{r}
-plant_size_tidy <- spread(plant_size, part, length)
-plant_size_tidy <- separate(plant_size_tidy, col = leaf, into = c("leaf_length","leaf_width"),sep="/")
-```
-
-
-## 3.3 select
-
-From the tidy plant size only keep the Plant, Plot and two leaves columns
-
-```{r}
-
-### Your code here
-
-```
-
-
-## 3.4 mutate
-
-From the tidy plant size compute the leaf area (assuming leaves are rectangles)
-
-```{r}
-
-### Your code here
-
-```
-
-
-## 3.5 summarise + group_by
-
-From the tidy plant size compute the average and median root length per plot
-
-```{r}
-
-### Your code here
-
-```
-
-
-
-
-# 3. work with you data
-## 3.1 subsetting
-
-We will work with the dataset 'nr_seedlings_tidy'
-1. extract measurements that were taken before Julian day 331 
-2. extract measurements for flowers 'b'
-3. extract measurements that were taken before Julian day 331 for flowers 'b'
-4. extract measurements that were taken before Julian day 331 for flowers 'b' and keep all columns except the column 'table'
-
-```{r}
-nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
-```
-
-## 3.2 calculate new variables
-Exercise for dataset 'plant_size_tidy'
-1. calculate the leaf area
-2. calculate the fraction of leaf length to inflorescence length
-3. calculate normalized values for each variable.
-
-```{r}
-
-```
-
-## 3.3 summarise
-Exercise for dataset 'plant_size_tidy'
-1. calculate average length of roots
-2. calculate average length of all columns
-3. calculate average length of roots per plot
-4. calculate average length of all columns per plot
-
-```{r}
-
-```
-
 
 ## 3.4 combinations
 

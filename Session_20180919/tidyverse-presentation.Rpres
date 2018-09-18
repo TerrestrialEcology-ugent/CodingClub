@@ -1,8 +1,9 @@
-tidyverse-presentation
+Back into the tidyverse
 ========================================================
-author: Bram Sercu
-date: October 19, 2017
-autosize: true
+author: Lionel Hertzog and Bram Sercu
+date: September 19, 2018
+width: 1440
+height: 900
 
 
 The tidyverse ecosystem
@@ -250,82 +251,30 @@ dat %>%
   arrange(City)
 ```
 
+Piping
+=================================
+
+Different ways to save object after passing through the tidyverse pipe.
+
+- Option 1:
+
+```{r}
+dat_tidied <- dat %>%
+  separate(Code, c("City","Province"))%>%
+  arrange(City)
+```
+
+- Option 2:
+
+```{r}
+dat %>%
+  separate(Code, c("City","Province"))%>%
+  arrange(City) -> dat_tidied
+
+```
 
 
-
-
-
-
-Part 2: working with your data
-========================================================
-
-Subset data
-========================================================
-
-Subset observations with  'filter'
-
-- filter(dataset, logical criteria on certain columns)
-- use logic operators to set (multiple) criteria
-- eg. filter(cars, speed<8)
-
-Subset variables with 'select'
-- select(dataset, name of column1, name of column2, ...)
-- use helper functions to define the columns more efficiently
-  - select(cars, - dist) removes column dist from dataset
-  - select(cars, speed:dist) selects all columns between column 'speed' and column 'dist' 
-
-
-Make new variables
-=======================================================
-
-compute and append one or more new columns with 'mutate'
-- mutate(dataset, new_column = operation between columns)
-- eg. mutate(iris, Sepal.Area = Sepal.Length*Sepal.Width, Sepal.Petal.fraction = Sepal.Length/Petal.Length )
-- use functions to calculate more complex measurements
-- transmute() works as mutate() but removes the original columns
-
-
-Summarise data
-=======================================================
-
-summarise data into one single row of values
-
-- summarise(iris, avg=mean(Sepal.Length))
-- summarise_all(iris, funs(mean))
-
-
-apply transformations to groups of the data
-=======================================================
-
-The function 'group_by' allows you to  define groups in the data
-When these grouped dataset is used to summarise or to mutate data,
-the transformations are done per group.
-
-- iris %>% group_by(Species) %>% summarise(avg=mean(Sepal.Length))
-- iris %>% group_by(Species) %>% summarise_all(funs(mean))
-- iris %>% group_by(Species) %>% mutate(Sepal.Length.log=log(Sepal.Length))
-
-
-Joining datatables
-========================================================
-
-lef_join(x, y, by = NULL,
-copy=FALSE, suffix=c(“.x”,“.y”),…)
-Join matching values from y to x.
-
-right_join(x, y, by = NULL, copy =
-FALSE, suffix=c(“.x”,“.y”),…)
-Join matching values from x to y.
-
-inner_join(x, y, by = NULL, copy =
-FALSE, suffix=c(“.x”,“.y”),…)
-Join data. Retain only rows with
-matches.
-
-full_join(x, y, by = NULL,
-copy=FALSE, suffix=c(“.x”,“.y”),…)
-Join data. Retain all values, all rows
-
+Time for some more advanced exercices !!!
 
 
 References
