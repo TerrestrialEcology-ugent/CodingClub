@@ -1,23 +1,213 @@
 ---
-title: "introduction to tidyR and Dplyr"
-author: "Bram Sercu"
-date: "October 19, 2017"
+title: "Back into the tidyverse"
+author: "Lionel Hertzog & Bram Sercu"
+date: "September 19, 2018"
 output: html_document
 ---
 
+Solution script, only look after trying out yourself !!!!
 
 # 0. load packages and data
 
 ```{r}
 library(dplyr)
 library(tidyr)
-library(tibble) #for me (lionel) I had to load this extra library ...
+library(ggplot2)
+```
 
-df1 <- read.txt()
+# 1. tidy your data
+
+## 1.1, Using gather
+
+use the command 'gather' when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
+- http://r4ds.had.co.nz/tidy-data.html#gathering
+
+```{r}
+# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
+# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
+
+nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
+```
+
+Make this data tidy:
+
+```{r}
+nr_seedlings_tidy <- gather(nr_seedlings,key = "Julian_day",value = "Nr_flower",JD233:JD399)
 ```
 
 
-# 1. create tibble and explore differences between tibble and dataframe
+## 1.2 Using spread
+
+Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
+- http://r4ds.had.co.nz/tidy-data.html#spreading
+
+```{r}
+# dataset with lenght of inflorescence shoot, root and length/width of leaf
+plant_size <- read.table("data/plant_size.txt", header=T)
+
+```
+
+Make this data (un)tidy:
+
+```{r}
+plant_size_spread <- spread(plant_size, key = part, value = length)
+```
+
+
+## 1.3 Using separate and unite
+
+The functions 'seperate' and 'unite' let you, resprectively, split the content of a column in two columns or join columns according to a specified seperator.
+
+From the dataset in 1.2 separate the width/length in leaf measurement into two separate columns:
+
+```{r}
+plant_size_spread <- separate(plant_size_spread, col = leaf, into = c("leaf_length","leaf_width"), sep = "/")
+```
+
+Now re-unite the width / length measurements into a new column: "width_length" (separator "_"):
+
+```{r}
+plant_size_unite <- unite(plant_size_spread, col = leaf_width_length, leaf_length, leaf_width, sep = "_", remove = FALSE)
+```
+
+# 2. dplyr
+
+## 2.1 filter
+
+In the "plant_size" dataset, filter rows to keep only observations from plot A
+
+```{r}
+filter(plant_size, Plot == "A")
+```
+
+## 2.2 arrange
+
+From the tidy plant size dataset arrange plants by inflorescence length
+
+```{r}
+#first we should turn all variables to numeric
+plant_size_spread$inflorescence <- as.numeric(as.character(plant_size_spread$inflorescence))
+plant_size_spread$root <- as.numeric(as.character(plant_size_spread$root))
+plant_size_spread$leaf_length <- as.numeric(plant_size_spread$leaf_length)
+plant_size_spread$leaf_width <- as.numeric(plant_size_spread$leaf_width)
+
+#now we can arrange
+arrange(plant_size_spread, inflorescence)
+```
+
+Tipp, here is how to get this tidy data
+
+```{r}
+plant_size_tidy <- spread(plant_size, part, length)
+plant_size_tidy <- separate(plant_size_tidy, col = leaf, into = c("leaf_length","leaf_width"),sep="/")
+```
+
+
+## 2.3 select
+
+From the tidy plant size only keep the Plant, Plot and two leaves columns
+
+```{r}
+select(plant_size_spread, Plant, Plot, leaf_length, leaf_width)
+```
+
+
+## 2.4 mutate
+
+From the tidy plant size compute the leaf area (assuming leaves are rectangles)
+
+```{r}
+mutate(plant_size_spread, leaf_area = leaf_length * leaf_width)
+```
+
+
+## 2.5 summarise + group_by
+
+From the tidy plant size compute the average and median root length per plot
+
+```{r}
+plant_size_plotg <- group_by(plant_size_spread, Plot)
+summarise(plant_size_plotg, Avg = mean(root), Med = median(root))
+```
+
+
+
+
+# 3. Piping - more advanced manipulation
+
+## 3.1 
+
+From nr_seedlings, do the following (using pipes if you feel like it):
+1. tidy the dataset (gather ...)
+2. Create a new variable: "julian_day" from the number in the column names, ie: from JD233 put 233 in this julian_day column, keep this dataset you will need it later on
+3. Only keep columns: plant, inflorescence, plate, julian_day and value
+4. Compute the total number of observations per plants
+
+```{r}
+nr_seedlings %>%
+  gather("JD", "nr_flower", JD233:JD399) %>%
+  mutate(julian_day = substr(JD, 3, 5)) -> nr_seedlings_tidy
+
+nr_seedlings_tidy %>%
+  select(plant, inflorescence, plate, julian_day, nr_flower) %>%
+  group_by(plant) %>%
+  summarise(Total_flower = sum(nr_flower, na.rm = TRUE))
+```
+
+
+## 3.2
+
+From plant_size, do the following:
+1. tidy the dataset (using spread), also separating leaf length from leaf width
+2. compute leaf area
+3. compute normalized values for all variables
+
+```{r}
+plant_size %>%
+  spread(part, length) %>%
+  separate(leaf, c("leaf_length","leaf_width")) %>%
+  mutate_at(.vars = vars(inflorescence:root), .funs = function(x) as.numeric(as.character(x))) %>% # to turn all factor variables into numeric
+  mutate(leaf_area = leaf_length * leaf_width) %>%
+  mutate_at(.vars = vars(inflorescence:leaf_area), .funs = funs(std = scale(.)))
+```
+
+## 3.3
+
+From the dataset obtained in 3.1, do the following:
+1. calculate total number of seedlings per plant and per julian day
+2. arrange per plant and per julian day 
+3. calculate the cumulative number of seedlings per plant and per julian day
+4. only keep plant id 1:10
+
+```{r}
+nr_seedlings_tidy %>%
+  group_by(plant, julian_day) %>%
+  summarise(nr_flower = sum(nr_flower, na.rm = TRUE)) %>%
+  arrange(plant, julian_day) %>% # this is actually not necessary, but just to be sure ...
+  mutate(Cum_flower = cumsum(nr_flower)) %>%
+  filter(plant < 11) -> nr_seedling_cum
+
+ggplot(nr_seedling_cum, aes(x = julian_day, y = Cum_flower, color = factor(plant), group = plant)) +
+  geom_path()
+```
+
+
+## Bonus I
+
+From the nr_seedling dataset
+
+1. based on the results of 3.3 compute the julian_day when the maximum number of flower was reached
+2. joined these results with the plant_size table
+3. explore relationships between plant sizes and the time of maximum flowering (scatterplots ...)
+
+```{r}
+
+## No solutions for that one , you are on your own ...
+
+```
+
+## Bonus II: create tibble and explore differences between tibble and dataframe
+
 ```{r}
 # change dataframe to tible
 cars_tib <- as_tibble(cars)
@@ -26,7 +216,6 @@ cars_tib <- as_tibble(cars)
 # show first 15 rows from cars_tib with print(cars_tib, n=12, width= Inf)
 
 # create a similar dataframe and tibble and check the differences (copy to console)
-# tibbles and dataframes are very similar but differ in a few small things
 
 tib1 <- tibble(
   numbers = c(1,2,3,4), 
@@ -46,194 +235,15 @@ df1$numbers
 
 tib1$n
 df1$n
-# in tibbles you have to enter the full name of the columnnames
-
 
 tib1[, "numbers"]
 df1[, "numbers"]
-# tibbles return always a tibble as output, dataframes can return a vector
-
 
 tib1[, c("numbers", "english")]
 df1[, c("numbers", "english")]
-# but in this case output is either a tibble or a dataframe
-
-```
-
-# 2. tidy your data
-use the commands gather when some of the column names are not names of variables, but values of a variable, to bring information that is spread over several columns to one column.
-- http://r4ds.had.co.nz/tidy-data.html#gathering
-
-Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. 
-- http://r4ds.had.co.nz/tidy-data.html#spreading
-
-Specification of columns to gather. Use bare variable names. Select all variables between x and z with x:z, exclude y with -y.
-
-
-## 2.1
-```{r}
-# load the dataset where the number of seedlings are counted at several dates (given in Julian Date)
-# column 6 to 18 are the number of seedlings counted at that particular day (represented as julian day).
-
-nr_seedlings <- read.table("data/nr_seedlings.txt", header=T)
-
-
-nr_seedlings_tidy <- gather(nr_seedlings, key = "julian_day", value = "nr_seedlings", -plant, -inflorescence, -flower, -table, -plate)
-
-#OR
-
-nr_seedlings_tidy <- nr_seedlings %>% 
-			gather(key = "julian_day", value = "nr_seedlings", JD233:JD399)
-```
-
-## 2.2
-```{r}
-# dataset with lenght of inflorescence shoot, root and length/width of leaf
-
-plant_size <- read.table("data/plant_size.txt", header=T)
-
-plant_size_tidy <- plant_size %>% 
-			spread(key=part, value= length) %>% 
-  			separate(leaf, into= c("leaf_length","leaf_width"), sep="/")
-
-```
-
-## 2.3
-```{r}
-# unite enables to unite two columns two one
-# reverse what you did in the previous exercise and combine the length and width of the leaf again to  one column using '_' as separator between the values
-
-plant_size_tidy %>%
-	 unite(new_leaf, leaf_length, leaf_width, sep="_") -> plant_size_less_tidy
-```
-
-
-# 3. work with you data
-## 3.1 subsetting
-
-We will work with the dataset 'nr_seedlings_tidy'
-1. extract measurements that were taken before Julian day 331 
-2. extract measurements for flowers 'b'
-3. extract measurements that were taken before Julian day 331 for flowers 'b'
-4. extract measurements that were taken before Julian day 331 for flowers 'b' and keep all columns except the column 'table'
-
-```{r}
-# preparation
-nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day < "JD331")
-
-# the previous solution would not work if 'JD' is sometimes in capitals and sometimes in small letters 'jd'
-# in that case it would make sense to either call the columns directly or separate the column to obtain a numeric column.
-
-nr_seedlings_tidy <- nr_seedlings_tidy %>% 
-  separate(julian_day, into = c("rubish", "julian_day"), sep = 2)
-nr_seedlings_tidy$julian_day <- as.numeric(nr_seedlings_tidy$julian_day)
-nr_seedlings_tidy_3.1.1 <- nr_seedlings_tidy %>% filter(julian_day<331)
-
-nr_seedlings_tidy_3.1.2 <- nr_seedlings_tidy %>% filter(flower == "b")
-
-nr_seedlings_tidy_3.1.3 <- nr_seedlings_tidy %>% filter(flower == "b" & julian_day<331)
-
-nr_seedlings_tidy_3.1.4 <- nr_seedlings_tidy %>% filter(flower == "b" & julian_day<331) %>%
-  select(-table)
-
-```
-
-## 3.2 calculate new variables
-Exercise for dataset 'plant_size_tidy'
-1. calculate the leaf area
-2. calculate the fraction of leaf length to inflorescence length
-3. calculate scaled variables with mean 0 and sd 1 for each variable.
-
-```{r}
-#turn the length and width variables into numeric
-plant_size_tidy <- plant_size_tidy %>% mutate_at(as.numeric(as.character()),-plant,-plot)
-
-
-plant_size_tidy_3.2.1 <- plant_size_tidy %>% mutate(leaf_area = leaf_length*leaf_width)
-
-plant_size_tidy_3.2.2 <- plant_size_tidy %>% mutate(leaf_area = leaf_length/inflorescence)
-
-# create own function to scale
-scaled <- function(x){
-  (x-mean(x))/sd(x)
-}
-
-plant_size_tidy_3.2.3 <- plant_size_tidy %>% mutate_at(vars(inflorescence:root), funs(scaled))
-
-# Or use existing R function
-plant_size_tidy_3.2.3B <- plant_size_tidy %>% mutate_at(vars(inflorescence:root), funs(scale))
-
-```
-
-## 3.3 summarise
-Exercise for dataset 'plant_size_tidy'
-1. calculate average length of roots
-2. calculate average length of all columns
-3. calculate average length of roots per plot
-4. calculate average length of all columns per plot
-
-```{r}
-plant_size_tidy %>% summarise(avg = mean(root))
-
-plant_size_tidy %>% summarise_all(funs(mean))
-
-plant_size_tidy %>% group_by(Plot) %>% summarise(avg = mean(root))
-
-plant_size_tidy %>% group_by(Plot) %>% summarise_all(funs(mean, sd))
-
-```
-
-
-## 3.4 combinations
-
-Exercise for dataset 'nr_seedlings_tidy'
-1. calculate total nr of seedlings per plant per julian day as new base dataset
-2. calculate mean and sd of nr of seedlings per inflorescence from the new dataset
-3. calculate total nr of seedlings per plant
-4. calculate the cumulative (from the lowest julian day to the highest) nr seedlings per plant  (inspect the results!)
-5. remove rows that contains NA as value for nr_seedlings (and run nr 4 again)
-6. Join the datatable 'nr_seedlings_tidy_3.4.4' with 'plant_size_tidy' and keep only plants that are available in 'plant_size_tidy'
-7. as nr 6 but keep all plants from both datatables.
-
-```{r}
-nr_seedlings_tidy_3.4.1 <- nr_seedlings_tidy %>%
-					 group_by(plant, julian_day, inflorescence) %>%
-					 summarise(nr_seedlings= sum(nr_seedlings))
-
-# we add inflorescence as argument to the group_by command to keep it as a column in order to use it in the next exercise 3.4.2
-nr_seedlings_tidy_3.4.2 <- nr_seedlings_tidy_3.4.1 %>% 
-					group_by(inflorescence) %>%
-				        summarise(mean_nr_seedlings= mean(nr_seedlings), sd_nr_seedlings= sd(nr_seedlings))
-
-nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.1 %>%
-					 group_by(plant) %>%
-					 summarise(total_nr_seedlings= sum(nr_seedlings))
-
-nr_seedlings_tidy_3.4.4 <- nr_seedlings_tidy_3.4.1 %>%
-					 group_by(plant) %>%
-					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
-# when there is one NA somewhere, all subsequent values will be NA
-
-# to solve the problem with the NA's we can either decide to remove rows with NA from the dataset
-# be aware that this removes some rows from the dataframe
-nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>%
-					 filter(!is.na(nr_seedlings)) %>%
-  					 group_by(plant) %>% 
-  					 mutate(cum_nr_seedlings = cumsum(nr_seedlings))
-
-# another option is to replace NA's with 0
-nr_seedlings_tidy_3.4.5 <- nr_seedlings_tidy_3.4.1 %>% 
-  					mutate( nr_seedlings = ifelse(is.na(nr_seedlings),0,nr_seedlings)) %>%
-  					group_by(plant) %>% 
- 				        mutate(cum_nr_seedlings = cumsum(nr_seedlings))
-
-# you might find that some conflicts arrise due to different names (plant and Plant with capital).
-nr_seedlings_tidy_3.4.6 <- right_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, by = c("plant" = "Plant"))
-
-
-# before performing 7 we will clean up our data so our dataframes are compatible using some other dplyr functions
-nr_seedlings_tidy_3.4.3 <- nr_seedlings_tidy_3.4.3 %>% rename(Plant=plant)
-nr_seedlings_tidy_3.4.7 <- full_join(nr_seedlings_tidy_3.4.3, plant_size_tidy, by = "Plant")
 
 
 ```
+
+
+
