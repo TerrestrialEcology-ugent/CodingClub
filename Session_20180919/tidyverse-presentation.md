@@ -63,12 +63,12 @@ Is this a tidy dataset? (2)
 
 
 ```
-    Site     January February    March
-1 Site 1  3.31564570 2.853967 12.66853
-2 Site 2 12.35968446 4.679603 16.10931
-3 Site 3  2.47632616 1.703870 14.22609
-4 Site 4 19.38648383 8.337114 14.68847
-5 Site 5  0.03838608 8.961834 17.41704
+    Site   January  February     March
+1 Site 1  9.045286 18.364937 11.784318
+2 Site 2 18.479388 17.262627  3.463056
+3 Site 3  8.846429  7.902052  9.243426
+4 Site 4  1.026197 12.673252  3.209903
+5 Site 5 17.901713  9.363042 14.621979
 ```
 
 Is this a tidy dataset? (3)
@@ -99,21 +99,21 @@ tmp_g
 
 ```
      Site    Month Temperature
-1  Site 1  January  3.31564570
-2  Site 2  January 12.35968446
-3  Site 3  January  2.47632616
-4  Site 4  January 19.38648383
-5  Site 5  January  0.03838608
-6  Site 1 February  2.85396718
-7  Site 2 February  4.67960291
-8  Site 3 February  1.70386962
-9  Site 4 February  8.33711408
-10 Site 5 February  8.96183435
-11 Site 1    March 12.66853236
-12 Site 2    March 16.10930969
-13 Site 3    March 14.22609015
-14 Site 4    March 14.68847064
-15 Site 5    March 17.41703519
+1  Site 1  January    9.045286
+2  Site 2  January   18.479388
+3  Site 3  January    8.846429
+4  Site 4  January    1.026197
+5  Site 5  January   17.901713
+6  Site 1 February   18.364937
+7  Site 2 February   17.262627
+8  Site 3 February    7.902052
+9  Site 4 February   12.673252
+10 Site 5 February    9.363042
+11 Site 1    March   11.784318
+12 Site 2    March    3.463056
+13 Site 3    March    9.243426
+14 Site 4    March    3.209903
+15 Site 5    March   14.621979
 ```
 
 
@@ -132,12 +132,12 @@ Creating tidy data
 ```
 
 ```
-    Site February     January    March
-1 Site 1 2.853967  3.31564570 12.66853
-2 Site 2 4.679603 12.35968446 16.10931
-3 Site 3 1.703870  2.47632616 14.22609
-4 Site 4 8.337114 19.38648383 14.68847
-5 Site 5 8.961834  0.03838608 17.41704
+    Site  February   January     March
+1 Site 1 18.364937  9.045286 11.784318
+2 Site 2 17.262627 18.479388  3.463056
+3 Site 3  7.902052  8.846429  9.243426
+4 Site 4 12.673252  1.026197  3.209903
+5 Site 5  9.363042 17.901713 14.621979
 ```
 
 Creating tidy data
@@ -239,43 +239,43 @@ dplyr is used to **manipulate** tidy data, there are five main functions:
 
 
 ```r
-arrange(mtcars, mpg)
+arrange(mtcars[,1:5], mpg)
 ```
 
 ```
-                  Type  mpg cyl  disp  hp drat    wt  qsec vs am gear carb
-1   Cadillac Fleetwood 10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
-2  Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
-3           Camaro Z28 13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
-4           Duster 360 14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
-5    Chrysler Imperial 14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
-6        Maserati Bora 15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
-7          Merc 450SLC 15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
-8          AMC Javelin 15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
-9     Dodge Challenger 15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
-10      Ford Pantera L 15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
-11          Merc 450SE 16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
-12          Merc 450SL 17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
-13           Merc 280C 17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
-14             Valiant 18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
-15   Hornet Sportabout 18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
-16            Merc 280 19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
-17    Pontiac Firebird 19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
-18        Ferrari Dino 19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
-19           Mazda RX4 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
-20       Mazda RX4 Wag 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
-21      Hornet 4 Drive 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
-22          Volvo 142E 21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
-23       Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
-24          Datsun 710 22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
-25            Merc 230 22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
-26           Merc 240D 24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
-27       Porsche 914-2 26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
-28           Fiat X1-9 27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
-29         Honda Civic 30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
-30        Lotus Europa 30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
-31            Fiat 128 32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
-32      Toyota Corolla 33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
+                  Type  mpg cyl  disp  hp
+1   Cadillac Fleetwood 10.4   8 472.0 205
+2  Lincoln Continental 10.4   8 460.0 215
+3           Camaro Z28 13.3   8 350.0 245
+4           Duster 360 14.3   8 360.0 245
+5    Chrysler Imperial 14.7   8 440.0 230
+6        Maserati Bora 15.0   8 301.0 335
+7          Merc 450SLC 15.2   8 275.8 180
+8          AMC Javelin 15.2   8 304.0 150
+9     Dodge Challenger 15.5   8 318.0 150
+10      Ford Pantera L 15.8   8 351.0 264
+11          Merc 450SE 16.4   8 275.8 180
+12          Merc 450SL 17.3   8 275.8 180
+13           Merc 280C 17.8   6 167.6 123
+14             Valiant 18.1   6 225.0 105
+15   Hornet Sportabout 18.7   8 360.0 175
+16            Merc 280 19.2   6 167.6 123
+17    Pontiac Firebird 19.2   8 400.0 175
+18        Ferrari Dino 19.7   6 145.0 175
+19           Mazda RX4 21.0   6 160.0 110
+20       Mazda RX4 Wag 21.0   6 160.0 110
+21      Hornet 4 Drive 21.4   6 258.0 110
+22          Volvo 142E 21.4   4 121.0 109
+23       Toyota Corona 21.5   4 120.1  97
+24          Datsun 710 22.8   4 108.0  93
+25            Merc 230 22.8   4 140.8  95
+26           Merc 240D 24.4   4 146.7  62
+27       Porsche 914-2 26.0   4 120.3  91
+28           Fiat X1-9 27.3   4  79.0  66
+29         Honda Civic 30.4   4  75.7  52
+30        Lotus Europa 30.4   4  95.1 113
+31            Fiat 128 32.4   4  78.7  66
+32      Toyota Corolla 33.9   4  71.1  65
 ```
 
 dplyr

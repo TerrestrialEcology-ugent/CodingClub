@@ -162,7 +162,7 @@ dplyr is used to **manipulate** tidy data, there are five main functions:
 - (ii) arrange: re-order rows
 
 ```{r}
-arrange(mtcars, mpg)
+arrange(mtcars[,1:5], mpg)
 ```
 
 dplyr
