@@ -16,6 +16,7 @@ In this repo you will find notes from the coding club meetings of the UGent form
 * Session_20180405: an introduction to latex
 * Session_20180626: an introduction to Meta-analyses
 * Session_20180919: back into the tidyverse
+* Session_20181003: data integration from the web
 
 # How to use
 
